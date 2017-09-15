@@ -5,6 +5,7 @@
 *.sublime-workspace
 *.iml
 .idea
+.vscode
 
 # Compiled source #
 ###################
