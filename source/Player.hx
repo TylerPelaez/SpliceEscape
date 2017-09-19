@@ -23,7 +23,8 @@ class Player extends FlxSprite {
         super();
         loadGraphic("assets/images/duck.png", true, 100, 114);
         _instructionTimer = 0.0;
-        drag.x = drag.y = 2000;
+        drag.x = 2000;
+        acceleration.y = 420;
     }
 
     override public function update(elapsed:Float):Void {
