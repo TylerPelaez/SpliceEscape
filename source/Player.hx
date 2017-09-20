@@ -14,16 +14,17 @@ import flixel.FlxObject;
 
 class Player extends FlxSprite {
 
-    var _instructionTimer:Float;
-    var _instructionArray:List<Instruction>;
-    var _currentInstruction:Instruction;
-    var _speed:Float;
+    private var _instructionTimer:Float;
+    private var _instructionList:List<Instruction>;
+    private var _currentInstruction:Instruction;
+    private var _speed:Float;
+    private var _isActive:Bool;
 
     public function new() {
         super();
         loadGraphic("assets/images/duck.png", true, 100, 114);
         _instructionTimer = 0.0;
-        _instructionArray = new List<Instruction>();
+        _instructionList = new List<Instruction>();
         
         drag.x = 2000; // High enough to quickly stop the player.
         acceleration.y = 1000; // Gravity is positive because Y increases downwards.
@@ -31,8 +32,12 @@ class Player extends FlxSprite {
 
     override public function update(elapsed:Float):Void {
 		super.update(elapsed);
-        updateInstruction(elapsed);
-		movement();
+        if (_isActive)
+        {
+            updateInstruction(elapsed);
+		    movement();
+        }
+        
     }
 
     /** 
@@ -45,28 +50,40 @@ class Player extends FlxSprite {
             return;
 
         // Temporary until Spliced Order Queuing is done.
-        if (FlxG.keys.anyPressed([RIGHT, D])) {
-            _currentInstruction = WalkRight;
-            _instructionTimer = 2.0;
-            _speed = 200.0;
-        } else if (FlxG.keys.anyPressed([LEFT, A])) {
-            _currentInstruction = WalkLeft;
-            _instructionTimer = 2.0;
-            _speed = -200.0;
-        } else if (FlxG.keys.anyPressed([UP, W])) {
-            _currentInstruction = Jump;
-            _instructionTimer = 2.0;
-            _speed = 0.0;
-        } else {
-            _currentInstruction = Idle;
-            _instructionTimer = -1.0;
-            _speed = 0.0;
-        }
+        
+        _currentInstruction = _instructionList.pop();
+
+
+        // if (FlxG.keys.anyPressed([RIGHT, D])) {
+        //     _currentInstruction = WalkRight;
+        //     _instructionTimer = 2.0;
+        //     _speed = 200.0;
+        // } else if (FlxG.keys.anyPressed([LEFT, A])) {
+        //     _currentInstruction = WalkLeft;
+        //     _instructionTimer = 2.0;
+        //     _speed = -200.0;
+        // } else if (FlxG.keys.anyPressed([UP, W])) {
+        //     _currentInstruction = Jump;
+        //     _instructionTimer = 2.0;
+        //     _speed = 0.0;
+        // } else {
+        //     _currentInstruction = Idle;
+        //     _instructionTimer = -1.0;
+        //     _speed = 0.0;
+        // }
     }
 
     public function movement():Void {
-        if (_currentInstruction != Idle) {
-            velocity.set(_speed, velocity.y);
-        }
+        velocity.set(_speed, velocity.y);
+    }
+
+    public function giveInstructions(newInstructions:List<Instruction>):Void
+    {
+        _instructionList = newInstructions.c;
+    }
+
+    public function setActive(active:Bool):Void
+    {
+        _isActive = active;
     }
 }

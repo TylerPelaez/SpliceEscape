@@ -20,6 +20,8 @@ class PlayState extends FlxState
 	private var _levels:Array<LevelData>;
 	private var _currentLevelIndex = -1;
 
+	private var _selectedInstructionList:List<Instruction>;
+
 	override public function create():Void
 	{
 		super.create();
@@ -40,6 +42,11 @@ class PlayState extends FlxState
 	{
 		// This is enough to determine if the player is touching any part of _collisionMap.
 		FlxG.collide(_player, _collisionMap);
+		// Player dies! Reset!
+		if (_player.getPosition().y > _levels[_currentLevelIndex]._height || _player.getPosition().x > _levels[_currentLevelIndex]._width )
+		{
+			resetPlayerPlayMode();
+		}
 		super.update(elapsed);
 	}
 
@@ -85,7 +92,18 @@ class PlayState extends FlxState
 		_collisionMap.loadMapFromCSV(CSVPath, TILEMAP_PATH, TILE_WIDTH, TILE_HEIGHT, AUTO);
 
 		// Reset player
+		resetPlayerPlayMode();
+	}
+
+	private function resetPlayerPlayMode()
+	{
 		_player.velocity.x = _player.velocity.y = 0;
 		_player.setPosition(_levels[_currentLevelIndex]._playerInitX, _levels[_currentLevelIndex]._playerInitY);
+	}
+
+	private function enterPlayMode()
+	{
+		_inViewMode = false;
+		resetPlayerPlayMode();
 	}
 }
