@@ -24,7 +24,7 @@ class Player extends FlxSprite {
         loadGraphic("assets/images/duck.png", true, 100, 114);
         _instructionTimer = 0;
         drag.x = 2000; // High enough to quickly stop the player.
-        acceleration.y = 420; // Gravity is positive because Y increases downwards.
+        acceleration.y = 1000; // Gravity is positive because Y increases downwards.
     }
 
     override public function update(elapsed:Float):Void {
@@ -63,10 +63,9 @@ class Player extends FlxSprite {
         }
     }
 
-
     public function movement():Void {
         if (_currentInstruction != Idle) {
-            velocity.set(_speed, 0);
+            velocity.set(_speed, velocity.y);
         }
     }
 }
