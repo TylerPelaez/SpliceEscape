@@ -53,7 +53,7 @@ class PlayState extends FlxState
 			var fullPath:String = "assets/data/" + curLevelName + ".txt";
 
 			if (Assets.exists(fullPath))
-				lines = Assets.getText(fullPath).split("\n");
+				lines = Assets.getText(fullPath).split("|");
 			else 
 				return;
 
@@ -82,7 +82,10 @@ class PlayState extends FlxState
 
 		// Using FlxTilemap enables us to display graphics AND check for 
 		// collisions between the player and the level.
-		var CSVPath:String = "assets/data/" + _levels[_currentLevelIndex]._name + "_tilemap.csv";
+		var CSVPath:String = "assets/data/" + _levels[_currentLevelIndex]._name;
+		//trace(CSVPath);
+		CSVPath = CSVPath + "_tilemap.csv";
+		trace(CSVPath);
 		_collisionMap.loadMapFromCSV(CSVPath, TILEMAP_PATH, TILE_WIDTH, TILE_HEIGHT, AUTO);
 
 		// Reset player
