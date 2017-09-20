@@ -14,9 +14,9 @@ enum Instructions {
 
 class Player extends FlxSprite {
 
-    var _instructionTimer : Float;
-    var _currentInstruction : Instructions;
-    var _speed : Float;
+    var _instructionTimer:Float;
+    var _currentInstruction:Instructions;
+    var _speed:Float;
 
 
     public function new() {
