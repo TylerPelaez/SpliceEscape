@@ -19,7 +19,6 @@ class PlayState extends FlxState
 
 	private var _levels:Array<LevelData>;
 	private var _currentLevelIndex = -1;
-	
 
 	override public function create():Void
 	{
@@ -58,7 +57,7 @@ class PlayState extends FlxState
 				return;
 
 			var levelData:LevelData = new LevelData();
-
+ 
 			// Level data files should all be in this format with a corresponding tilemap.csv in data folder
 			levelData._name = lines[0];
 			levelData._width = Std.parseInt(lines[1]);

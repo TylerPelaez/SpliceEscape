@@ -9,8 +9,6 @@ class Instruction extends FlxSprite
     private var _assignVelocityX:Int;
     private var _assignVelocityY:Int;
 
-
-
     public function new(name:String, duration:Int, assignVelocityX:Int, assignVelocityY:Int)
     {
         super();

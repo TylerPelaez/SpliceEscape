@@ -5,24 +5,26 @@ import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
 
-enum Instructions {
-    Idle;
-    WalkLeft;
-    WalkRight;
-    Jump;
-}
+// enum Instructions {
+//     Idle;
+//     WalkLeft;
+//     WalkRight;
+//     Jump;
+// }
 
 class Player extends FlxSprite {
 
     var _instructionTimer:Float;
-    var _currentInstruction:Instructions;
+    var _instructionArray:List<Instruction>;
+    var _currentInstruction:Instruction;
     var _speed:Float;
-
 
     public function new() {
         super();
         loadGraphic("assets/images/duck.png", true, 100, 114);
         _instructionTimer = 0.0;
+        _instructionArray = new List<Instruction>();
+        
         drag.x = 2000; // High enough to quickly stop the player.
         acceleration.y = 1000; // Gravity is positive because Y increases downwards.
     }
