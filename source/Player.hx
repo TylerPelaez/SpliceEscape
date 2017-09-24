@@ -5,32 +5,41 @@ import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
 
-enum Instructions {
-    Idle;
-    WalkLeft;
-    WalkRight;
-    Jump;
-}
+// enum Instructions {
+//     Idle;
+//     WalkLeft;
+//     WalkRight;
+//     Jump;
+// }
 
 class Player extends FlxSprite {
 
-    var _instructionTimer:Int;
-    var _currentInstruction:Instructions;
-    var _speed:Float;
-
+    private var _instructionTimer:Float;
+    private var _instructionList:List<Instruction>;
+    private var _currentInstruction:Instruction;
+    private var _speed:Float;
+    private var _isActive:Bool;
 
     public function new() {
         super();
         loadGraphic("assets/images/duck.png", true, 100, 114);
-        _instructionTimer = 0;
-        drag.x = 2000; // High enough to quickly stop the player.
-        acceleration.y = 1000; // Gravity is positive because Y increases downwards.
+        _instructionTimer = 0.0;
+        _instructionList = new List<Instruction>();
+
+        setFacingFlip(FlxObject.LEFT, true, false);
+		setFacingFlip(FlxObject.RIGHT, false, false);
+
+        acceleration.y = 750; // Gravity is positive because Y increases downwards.
     }
 
     override public function update(elapsed:Float):Void {
-		super.update(elapsed);
-        updateInstruction(elapsed);
-		movement();
+		
+        if (_isActive)
+        {
+            updateInstruction(elapsed);
+		    movement();
+        }
+        super.update(elapsed);
     }
 
     /** 
@@ -44,28 +53,42 @@ class Player extends FlxSprite {
             return;
 
         // Temporary until Spliced Order Queuing is done.
-        if (FlxG.keys.anyPressed([RIGHT, D])) {
-            _currentInstruction = WalkRight;
-            _instructionTimer = 120;
-            _speed = 200.0;
-        } else if (FlxG.keys.anyPressed([LEFT, A])) {
-            _currentInstruction = WalkLeft;
-            _instructionTimer = 120;
-            _speed = -200.0;
-        } else if (FlxG.keys.anyPressed([UP, W])) {
-            _currentInstruction = Jump;
-            _instructionTimer = 120;
-            _speed = 0.0;
-        } else {
-            _currentInstruction = Idle;
-            _instructionTimer = -1;
-            _speed = 0.0;
+        if (!_instructionList.isEmpty())
+        {
+            _currentInstruction = _instructionList.pop();
+            _speed = _currentInstruction._assignVelocityX;
+            velocity.set(_speed, _currentInstruction._assignVelocityY);
+            _instructionTimer = _currentInstruction._duration;
+            facing = _currentInstruction._facingLeft ? FlxObject.LEFT : FlxObject.RIGHT;
+        } else
+        {
+            _speed = 0;
+            velocity.set(0, velocity.y);
         }
     }
 
     public function movement():Void {
-        if (_currentInstruction != Idle) {
-            velocity.set(_speed, velocity.y);
+        velocity.set(_speed, velocity.y);
+    }
+
+    public function giveInstructions(newInstructions:List<Instruction>):Void
+    {
+        _instructionList = new List<Instruction>();
+        for (instruction in newInstructions)
+        {
+            _instructionList.add(instruction.clone());
         }
+    }
+
+    public function clearInstructions()
+    {
+        _instructionList.clear();
+        _instructionTimer = -1;
+        _currentInstruction = null;
+    }
+
+    public function setActive(active:Bool):Void
+    {
+        _isActive = active;
     }
 }
