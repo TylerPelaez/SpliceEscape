@@ -73,6 +73,10 @@ class PlayState extends FlxState
 		{
 			resetPlayerViewMode();
 		}
+		if (_inViewMode && FlxG.keys.anyPressed([SPACE]))
+		{
+			resetPlayerPlayMode();
+		}
 		super.update(elapsed);
 		
 	}
@@ -123,12 +127,12 @@ class PlayState extends FlxState
 
 	private function initInstructions():Void
 	{
-		WALK_LEFT_INSTRUCTION = new Instruction("Walk Left", 2, -200, 0);
-		WALK_RIGHT_INSTRUCTION = new Instruction("Walk Right", 2, 200, 0);
-		JUMP_RIGHT_INSTRUCTION = new Instruction("Jump Right", 1.25, 200, -1000);
-		JUMP_LEFT_INSTRUCTION = new Instruction("Jump Left", 1.25, -200, -1000);
-		IDLE_INSTRUCTION = new Instruction("Idle", 2, 0, 0);
-		INTERACT_INSTRUCTION = new Instruction("Interact", 0.5, 0, 0, true);
+		WALK_LEFT_INSTRUCTION = new Instruction("Walk Left", 2, -200, 0, true);
+		WALK_RIGHT_INSTRUCTION = new Instruction("Walk Right", 2, 200, 0, false);
+		JUMP_RIGHT_INSTRUCTION = new Instruction("Jump Right", 1.25, 200, -1000, false);
+		JUMP_LEFT_INSTRUCTION = new Instruction("Jump Left", 1.25, -200, -1000, true);
+		IDLE_INSTRUCTION = new Instruction("Idle", 2, 0, 0, false);
+		INTERACT_INSTRUCTION = new Instruction("Interact", 0.5, 0, 0, false, true);
 	}
 
 	private function resetPlayerViewMode()

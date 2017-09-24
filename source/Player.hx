@@ -25,7 +25,10 @@ class Player extends FlxSprite {
         loadGraphic("assets/images/duck.png", true, 100, 114);
         _instructionTimer = 0.0;
         _instructionList = new List<Instruction>();
-        
+
+        setFacingFlip(FlxObject.LEFT, true, false);
+		setFacingFlip(FlxObject.RIGHT, false, false);
+
         acceleration.y = 750; // Gravity is positive because Y increases downwards.
     }
 
@@ -55,6 +58,7 @@ class Player extends FlxSprite {
             _speed = _currentInstruction._assignVelocityX;
             velocity.set(_speed, _currentInstruction._assignVelocityY);
             _instructionTimer = _currentInstruction._duration;
+            facing = _currentInstruction._facingLeft ? FlxObject.LEFT : FlxObject.RIGHT;
         } else
         {
             _speed = 0;
@@ -68,12 +72,18 @@ class Player extends FlxSprite {
 
     public function giveInstructions(newInstructions:List<Instruction>):Void
     {
-        _instructionList = newInstructions;
+        _instructionList = new List<Instruction>();
+        for (instruction in newInstructions)
+        {
+            _instructionList.add(instruction.clone());
+        }
     }
 
     public function clearInstructions()
     {
         _instructionList.clear();
+        _instructionTimer = -1;
+        _currentInstruction = null;
     }
 
     public function setActive(active:Bool):Void
