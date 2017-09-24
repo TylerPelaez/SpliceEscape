@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxState;
 import flixel.tile.FlxTilemap;
 import openfl.Assets;
+import flixel.FlxSprite;
 
 class PlayState extends FlxState
 {
@@ -31,6 +32,8 @@ class PlayState extends FlxState
 
 	private var _selectedInstructionList:List<Instruction>;
 
+	private var _mouseWrapper:FlxSprite;
+
 	override public function create():Void
 	{
 		super.create();
@@ -40,6 +43,7 @@ class PlayState extends FlxState
 		_levels = new Array<LevelData>();
 		_selectedInstructionList = new List<Instruction>();
 		initInstructions();
+		_mouseWrapper = new FlxSprite();
 		_inViewMode = false;
 
 		add(_collisionMap);
@@ -49,6 +53,8 @@ class PlayState extends FlxState
 
 		loadlevelsFromFile(FIRST_LEVEL_NAME);
 		loadNextLevel();
+
+
 
 		// TEST CODE:
 		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION.clone());
@@ -68,6 +74,7 @@ class PlayState extends FlxState
 	{
 		// This is enough to determine if the player is touching any part of _collisionMap.
 		FlxG.collide(_collisionMap, _player);
+		_mouseWrapper.setPosition(FlxG.mouse.getWorldPosition().x, FlxG.mouse.getWorldPosition().y);
 		// Player dies! Reset!
 		if (_player.getPosition().y > _levels[_currentLevelIndex]._height || _player.getPosition().x > _levels[_currentLevelIndex]._width )
 		{
@@ -140,8 +147,10 @@ class PlayState extends FlxState
 		resetPlayerPlayMode();
 		_player.setActive(false);
 		_player.alpha = 0.2;
+		_player.facing;
 		_inViewMode = true;
 		_player.clearInstructions();
+		FlxG.camera.follow(_mouseWrapper, TOPDOWN, 0.1);
 	}
 
 	private function resetPlayerPlayMode()
@@ -152,6 +161,7 @@ class PlayState extends FlxState
 		_player.velocity.x = _player.velocity.y = 0;
 		_player.setPosition(_levels[_currentLevelIndex]._playerInitX, _levels[_currentLevelIndex]._playerInitY);
 		_player.giveInstructions(_selectedInstructionList);
+		FlxG.camera.follow(_player, PLATFORMER, 1);
 		_inViewMode = false;
 	}
 }
