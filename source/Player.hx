@@ -26,18 +26,17 @@ class Player extends FlxSprite {
         _instructionTimer = 0.0;
         _instructionList = new List<Instruction>();
         
-        drag.x = 2000; // High enough to quickly stop the player.
-        acceleration.y = 1000; // Gravity is positive because Y increases downwards.
+        acceleration.y = 750; // Gravity is positive because Y increases downwards.
     }
 
     override public function update(elapsed:Float):Void {
-		super.update(elapsed);
+		
         if (_isActive)
         {
             updateInstruction(elapsed);
 		    movement();
         }
-        
+        super.update(elapsed);
     }
 
     /** 
@@ -50,27 +49,17 @@ class Player extends FlxSprite {
             return;
 
         // Temporary until Spliced Order Queuing is done.
-        
-        _currentInstruction = _instructionList.pop();
-
-
-        // if (FlxG.keys.anyPressed([RIGHT, D])) {
-        //     _currentInstruction = WalkRight;
-        //     _instructionTimer = 2.0;
-        //     _speed = 200.0;
-        // } else if (FlxG.keys.anyPressed([LEFT, A])) {
-        //     _currentInstruction = WalkLeft;
-        //     _instructionTimer = 2.0;
-        //     _speed = -200.0;
-        // } else if (FlxG.keys.anyPressed([UP, W])) {
-        //     _currentInstruction = Jump;
-        //     _instructionTimer = 2.0;
-        //     _speed = 0.0;
-        // } else {
-        //     _currentInstruction = Idle;
-        //     _instructionTimer = -1.0;
-        //     _speed = 0.0;
-        // }
+        if (!_instructionList.isEmpty())
+        {
+            _currentInstruction = _instructionList.pop();
+            _speed = _currentInstruction._assignVelocityX;
+            velocity.set(_speed, _currentInstruction._assignVelocityY);
+            _instructionTimer = _currentInstruction._duration;
+        } else
+        {
+            _speed = 0;
+            velocity.set(0, velocity.y);
+        }
     }
 
     public function movement():Void {
@@ -79,7 +68,12 @@ class Player extends FlxSprite {
 
     public function giveInstructions(newInstructions:List<Instruction>):Void
     {
-        _instructionList = newInstructions.c;
+        _instructionList = newInstructions;
+    }
+
+    public function clearInstructions()
+    {
+        _instructionList.clear();
     }
 
     public function setActive(active:Bool):Void
