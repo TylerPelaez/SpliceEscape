@@ -45,10 +45,9 @@ class Player extends FlxSprite {
     /** 
     *   Function responsible for determining if the current instruction has ended,
     *   as well as assigning the next instruction and the instructionTimer time.
-    *   Instruction timer is 60 Hz frames.
     **/
     private function updateInstruction(elapsed:Float):Void {
-        _instructionTimer -= 1;
+        _instructionTimer -= elapsed;
         if ( _instructionTimer > 0.0 )
             return;
 
