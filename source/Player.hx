@@ -48,10 +48,10 @@ class Player extends FlxSprite {
     **/
     private function updateInstruction(elapsed:Float):Void {
         _instructionTimer -= elapsed;
-        if ( _instructionTimer > 0.0 )
+        //Checking if absolute y vel > 20 ensures that if we're airborne we can't get new instructions(zero air maneuverabiltiy)
+        if ( _instructionTimer > 0.0 || (velocity.y > 20 || velocity.y < -20))
             return;
 
-        // Temporary until Spliced Order Queuing is done.
         if (!_instructionList.isEmpty())
         {
             _currentInstruction = _instructionList.pop();
