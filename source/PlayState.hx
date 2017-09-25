@@ -1,6 +1,7 @@
 package;
 
 import flixel.FlxG;
+import flixel.group.FlxGroup;
 import flixel.FlxState;
 import flixel.tile.FlxTilemap;
 import openfl.Assets;
@@ -29,6 +30,7 @@ class PlayState extends FlxState
 
 	private var _levels:Array<LevelData>;
 	private var _currentLevelIndex = -1;
+	private var _spikesGroup:FlxTypedGroup<Spikes>;
 
 	private var _selectedInstructionList:List<Instruction>;
 
@@ -44,27 +46,29 @@ class PlayState extends FlxState
 		_selectedInstructionList = new List<Instruction>();
 		initInstructions();
 		_mouseWrapper = new FlxSprite();
+		_spikesGroup = new FlxTypedGroup<Spikes>();
 		_inViewMode = false;
 
 		add(_collisionMap);
 		add(_player);
+		add(_spikesGroup);
 
 		FlxG.camera.follow(_player, PLATFORMER, 1);
 
 		loadlevelsFromFile(FIRST_LEVEL_NAME);
 		loadNextLevel();
 
-
-
 		// TEST CODE:
-		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION.clone());
-		_selectedInstructionList.add(JUMP_RIGHT_INSTRUCTION.clone());
-		_selectedInstructionList.add(JUMP_RIGHT_INSTRUCTION.clone());
-		
-		
-		_selectedInstructionList.add(IDLE_INSTRUCTION.clone());
-		_selectedInstructionList.add(WALK_LEFT_INSTRUCTION.clone());
-
+		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(JUMP_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(JUMP_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(IDLE_INSTRUCTION);
+		_selectedInstructionList.add(WALK_LEFT_INSTRUCTION);
+		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
 		// Reset player
 		resetPlayerViewMode();
 	}
@@ -76,16 +80,23 @@ class PlayState extends FlxState
 		FlxG.collide(_collisionMap, _player);
 		_mouseWrapper.setPosition(FlxG.mouse.getWorldPosition().x, FlxG.mouse.getWorldPosition().y);
 		// Player dies! Reset!
-		if (_player.getPosition().y > _levels[_currentLevelIndex]._height || _player.getPosition().x > _levels[_currentLevelIndex]._width )
+		if (checkPlayerDeath())
 		{
 			resetPlayerViewMode();
+		}
+		if (_player.getPosition().x < 0 )
+		{
+			_player.setPosition(0, _player.getPosition().y);
+		}
+		if (_player.getPosition().x > _levels[_currentLevelIndex]._width - _player.width)
+		{
+			_player.setPosition(_levels[_currentLevelIndex]._width - _player.width, _player.getPosition().y);
 		}
 		if (_inViewMode && FlxG.keys.anyPressed([SPACE]))
 		{
 			resetPlayerPlayMode();
 		}
 		super.update(elapsed);
-		
 	}
 
 	private function loadlevelsFromFile(firstLevelName:String):Void{
@@ -109,8 +120,25 @@ class PlayState extends FlxState
 			levelData._height = Std.parseInt(lines[2]);
 			levelData._playerInitX = Std.parseInt(lines[3]);
 			levelData._playerInitY = Std.parseInt(lines[4]);
-			curLevelName = lines[5];
+			
 
+			var fullItemsPath:String = "assets/data/" + curLevelName +  "_items.txt";
+			var itemLine:Array<String>;
+
+			if (Assets.exists(fullItemsPath))
+			{
+				itemLine = Assets.getText(fullItemsPath).split("|");
+				for (item in itemLine)
+				{
+					if (item.split(":")[0] == "spikes")
+					{
+						levelData._spikeArray.push(new Spikes());
+						levelData._spikeArray[levelData._spikeArray.length - 1].setPosition(Std.parseInt(item.split(":")[1]), Std.parseInt(item.split(":")[2]));
+					}
+									
+				}
+			}
+			curLevelName = lines[5];
 			_levels.push(levelData);
 		} while(curLevelName != "end");
 	}
@@ -130,10 +158,17 @@ class PlayState extends FlxState
 		//trace(CSVPath);
 		CSVPath = CSVPath + "_tilemap.csv";
 		_collisionMap.loadMapFromCSV(CSVPath, TILEMAP_PATH, TILE_WIDTH, TILE_HEIGHT, AUTO);
+
+		_spikesGroup.clear();
+		for (spikes in _levels[_currentLevelIndex]._spikeArray)
+		{
+			_spikesGroup.add(spikes);
+		}
 	}
 
 	private function initInstructions():Void
 	{
+		// Instructions that can be copied and then given to the player's instruction list.
 		WALK_LEFT_INSTRUCTION = new Instruction("Walk Left", 2, -200, 0, true);
 		WALK_RIGHT_INSTRUCTION = new Instruction("Walk Right", 2, 200, 0, false);
 		JUMP_RIGHT_INSTRUCTION = new Instruction("Jump Right", 1.25, 200, -1000, false);
@@ -150,6 +185,7 @@ class PlayState extends FlxState
 		_player.facing;
 		_inViewMode = true;
 		_player.clearInstructions();
+		FlxG.camera.focusOn(_player.getPosition());
 		FlxG.camera.follow(_mouseWrapper, TOPDOWN, 0.1);
 	}
 
@@ -163,5 +199,10 @@ class PlayState extends FlxState
 		_player.giveInstructions(_selectedInstructionList);
 		FlxG.camera.follow(_player, PLATFORMER, 1);
 		_inViewMode = false;
+	}
+
+	private function checkPlayerDeath():Bool
+	{
+		return (_player.getPosition().y > _levels[_currentLevelIndex]._height) || FlxG.overlap(_spikesGroup, _player); 
 	}
 }
