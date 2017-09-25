@@ -5,6 +5,7 @@ import flixel.FlxState;
 import flixel.tile.FlxTilemap;
 import openfl.Assets;
 import flixel.FlxSprite;
+import flixel.FlxObject;
 
 class PlayState extends FlxState
 {
@@ -129,11 +130,9 @@ class PlayState extends FlxState
 		var CSVPath:String = "assets/data/" + _levels[_currentLevelIndex]._name;
 		//trace(CSVPath);
 		CSVPath = CSVPath + "_tilemap.csv";
-<<<<<<< HEAD
-		trace(CSVPath);
-=======
->>>>>>> ae4d98d0374b73ba975059ce023e76f2c3688b43
-		_collisionMap.loadMapFromCSV(CSVPath, TILEMAP_PATH, TILE_WIDTH, TILE_HEIGHT, AUTO);
+		_collisionMap.loadMapFromCSV(CSVPath, TILEMAP_PATH, TILE_WIDTH, TILE_HEIGHT);
+		// Kill player on collision with red tile(test for barbed wire)
+		_collisionMap.setTileProperties(2,FlxObject.ANY,function(o1:FlxObject,o2:FlxObject){resetPlayerViewMode();});
 	}
 
 	private function initInstructions():Void
