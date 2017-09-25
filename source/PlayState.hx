@@ -6,6 +6,7 @@ import flixel.FlxState;
 import flixel.tile.FlxTilemap;
 import openfl.Assets;
 import flixel.FlxSprite;
+import flixel.FlxObject;
 
 class PlayState extends FlxState
 {
@@ -30,7 +31,6 @@ class PlayState extends FlxState
 
 	private var _levels:Array<LevelData>;
 	private var _currentLevelIndex = -1;
-	private var _spikesGroup:FlxTypedGroup<Spikes>;
 
 	private var _selectedInstructionList:List<Instruction>;
 
@@ -46,12 +46,10 @@ class PlayState extends FlxState
 		_selectedInstructionList = new List<Instruction>();
 		initInstructions();
 		_mouseWrapper = new FlxSprite();
-		_spikesGroup = new FlxTypedGroup<Spikes>();
 		_inViewMode = false;
 
 		add(_collisionMap);
 		add(_player);
-		add(_spikesGroup);
 
 		FlxG.camera.follow(_player, PLATFORMER, 1);
 
@@ -80,7 +78,7 @@ class PlayState extends FlxState
 		FlxG.collide(_collisionMap, _player);
 		_mouseWrapper.setPosition(FlxG.mouse.getWorldPosition().x, FlxG.mouse.getWorldPosition().y);
 		// Player dies! Reset!
-		if (checkPlayerDeath())
+		if (_player.getPosition().y > _levels[_currentLevelIndex]._height)
 		{
 			resetPlayerViewMode();
 		}
@@ -121,23 +119,6 @@ class PlayState extends FlxState
 			levelData._playerInitX = Std.parseInt(lines[3]);
 			levelData._playerInitY = Std.parseInt(lines[4]);
 			
-
-			var fullItemsPath:String = "assets/data/" + curLevelName +  "_items.txt";
-			var itemLine:Array<String>;
-
-			if (Assets.exists(fullItemsPath))
-			{
-				itemLine = Assets.getText(fullItemsPath).split("|");
-				for (item in itemLine)
-				{
-					if (item.split(":")[0] == "spikes")
-					{
-						levelData._spikeArray.push(new Spikes());
-						levelData._spikeArray[levelData._spikeArray.length - 1].setPosition(Std.parseInt(item.split(":")[1]), Std.parseInt(item.split(":")[2]));
-					}
-									
-				}
-			}
 			curLevelName = lines[5];
 			_levels.push(levelData);
 		} while(curLevelName != "end");
@@ -157,13 +138,9 @@ class PlayState extends FlxState
 		var CSVPath:String = "assets/data/" + _levels[_currentLevelIndex]._name;
 		//trace(CSVPath);
 		CSVPath = CSVPath + "_tilemap.csv";
-		_collisionMap.loadMapFromCSV(CSVPath, TILEMAP_PATH, TILE_WIDTH, TILE_HEIGHT, AUTO);
-
-		_spikesGroup.clear();
-		for (spikes in _levels[_currentLevelIndex]._spikeArray)
-		{
-			_spikesGroup.add(spikes);
-		}
+		_collisionMap.loadMapFromCSV(CSVPath, TILEMAP_PATH, TILE_WIDTH, TILE_HEIGHT);
+		// Kill player on collision with red tile(test for barbed wire)
+		_collisionMap.setTileProperties(2,FlxObject.ANY,function(o1:FlxObject,o2:FlxObject){resetPlayerViewMode();});
 	}
 
 	private function initInstructions():Void
@@ -199,10 +176,5 @@ class PlayState extends FlxState
 		_player.giveInstructions(_selectedInstructionList);
 		FlxG.camera.follow(_player, PLATFORMER, 1);
 		_inViewMode = false;
-	}
-
-	private function checkPlayerDeath():Bool
-	{
-		return (_player.getPosition().y > _levels[_currentLevelIndex]._height) || FlxG.overlap(_spikesGroup, _player); 
 	}
 }
