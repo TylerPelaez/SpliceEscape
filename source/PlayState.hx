@@ -18,12 +18,12 @@ class PlayState extends FlxState
 	private static var TILEMAP_PATH:String = "assets/images/test_tilemap.png";
 	private static var FIRST_LEVEL_NAME:String = "test";
 	// Constants for orders button roll
-	private static var ROLL_X = 0;
-	private static var ROLL_Y = 0;
-	private static var ROLL_SCALE = 3;
+	private static var ROLL_X = 50;
+	private static var ROLL_Y = 50;
+	private static var ROLL_SCALE = 2;
 	private static var ROLL_COUNT = 4;
-	private static var ROLL_SPACING = 200;
-	private static var ROLL_TEXT_PIXELS = 32;
+	private static var ROLL_SPACING = 50;
+	private static var ROLL_PIXELS = 32;
 	private static var ROLL_SELECT_DROP = 200;
 	private static var SELECT_PIXELS = 32;	
 	// Instructions to be initialized in create()
@@ -72,38 +72,40 @@ class PlayState extends FlxState
 		_inViewMode = false;
 
 		_orderDisplay = new FlxText();
-		_orderDisplay.x = 400;
-		_orderDisplay.y = ROLL_X + ROLL_SELECT_DROP;
-		_orderDisplay.setFormat(null,SELECT_PIXELS);
+		_orderDisplay.x = ROLL_X;
+		_orderDisplay.y = ROLL_Y + ROLL_SELECT_DROP;
+		_orderDisplay.setFormat("arial",SELECT_PIXELS);
 		//_orderDisplay.exists = false;
 
 		_orders = new Array<FlxButton>();
 
 		_orderBase = 0;
 		
-		_rollRight = new FlxButton(0,0,"→",function(){_orderBase++;});
+		_rollRight = new FlxButton(0,ROLL_Y,"→",function(){_orderBase++;});
 		_rollRight.scale.y = ROLL_SCALE;
-		_rollRight.label.setFormat(null,ROLL_PIXELS);
+		_rollRight.label.setFormat("arial",ROLL_PIXELS);
+		_rollRight.x = ROLL_X + (ROLL_COUNT + 2)*ROLL_SPACING;
 		//_rollRight.exists = false;
 
-		_rollLeft = new FlxButton(0,0,"←",function(){_orderBase--;});
+		_rollLeft = new FlxButton(0,ROLL_X,"←",function(){_orderBase--;});
 		_rollLeft.scale.y = ROLL_SCALE;
-		_rollLeft.label.setFormat(null,ROLL_PIXELS);
-		_rollLeft.x = (ROLL_COUNT + 2)*ROLL_SPACING;
+		_rollLeft.label.setFormat("arial",ROLL_PIXELS);
+		_rollLeft.x = ROLL_X;
 		//_rollRight.exists = false;
 
 		//Generate ROLL_COUNT buttons, set them to be scaled and formatted appropriately.
 		for(i in 0...ROLL_COUNT)
 		{
-			_orders.insert(0,new FlxButton());
-			_orders[0].x = (ROLL_COUNT + 1)*ROLL_SPACING - i;
+			_orders.insert(0,new FlxButton(ROLL_X +(ROLL_COUNT + 1)*ROLL_SPACING - i,ROLL_Y,""));
 			_orders[0].scale.x = _orders[0].scale.y = ROLL_SCALE;
-			_orders[0].label.setFormat(null,ROLL_PIXELS);
+			_orders[0].label.setFormat("arial",ROLL_PIXELS);
 			//_orders[0].exists = false;
 			add(_orders[0]);
 		}
 
-
+		add(_rollLeft);
+		add(_rollRight);
+		add(_orderDisplay);
 		add(_collisionMap);
 		add(_player);
 
@@ -113,16 +115,15 @@ class PlayState extends FlxState
 		loadNextLevel();
 
 		// TEST CODE:
-		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
-		_selectedInstructionList.add(JUMP_RIGHT_INSTRUCTION);
-		_selectedInstructionList.add(JUMP_RIGHT_INSTRUCTION);
-		_selectedInstructionList.add(IDLE_INSTRUCTION);
-		_selectedInstructionList.add(WALK_LEFT_INSTRUCTION);
-		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
-		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
-		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
-		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
-		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
+		_availableInstructionList.insert(0,new List<Instruction>());
+		_availableInstructionList[0].add(JUMP_RIGHT_INSTRUCTION);
+		_availableInstructionList[0].add(JUMP_RIGHT_INSTRUCTION);
+		_availableInstructionList.insert(0,new List<Instruction>());
+		_availableInstructionList[0].add(WALK_RIGHT_INSTRUCTION);
+		_availableInstructionList[0].add(WALK_RIGHT_INSTRUCTION);
+		_availableInstructionList.insert(0,new List<Instruction>());
+		_availableInstructionList[0].add(IDLE_INSTRUCTION);
+		_availableInstructionList[0].add(WALK_RIGHT_INSTRUCTION);
 		// Reset player
 		resetPlayerViewMode();
 	}
@@ -155,10 +156,12 @@ class PlayState extends FlxState
 
 	private function setOrdersState()
 	{
+		//TODO: Make orders UI visible here
 		for(i in 0...ROLL_COUNT)
 		{
 			_orders[i].label.text = "";
 			_orders[i].onUp.callback = function(){};
+			_orders[i].exists = true;
 			//If in range, bind the button to adding the order list and add its text to the button.
 			if(i+_orderBase < _availableInstructionList.length && i+_orderBase >= 0)
 			{
@@ -168,19 +171,43 @@ class PlayState extends FlxState
 				}
 				_orders[i].onUp.callback = function(){
 					_subInstructionList.add(_availableInstructionList[i]);
+					_availableInstructionList.remove(_availableInstructionList[i]);
 					//Set the orders buttons again
 					setOrdersState();
 				}
+			}
+			else
+			{
+				_orders[i].exists = false;
 			}
 		}
 		_orderDisplay.text = "";
 		for(sublist in _subInstructionList)
 		{
+
 			for(ins in sublist)
 			{
 				_orderDisplay.text += ins._name;
 			}
 		}
+	}
+
+	private function flattenSubInstruction()
+	{
+		var temp:List<Instruction> = new List<Instruction>();
+		for(sublist in _subInstructionList)
+		{
+			for(ins in sublist)
+			{
+				temp.add(ins);
+			}
+		}
+		return temp;
+	}
+
+	private function unsetOrdersState()
+	{
+		//TODO: Make all the orders UI stuff invisible here.
 	}
 
 	private function loadlevelsFromFile(firstLevelName:String):Void{
@@ -250,6 +277,7 @@ class PlayState extends FlxState
 		_player.clearInstructions();
 		FlxG.camera.focusOn(_player.getPosition());
 		FlxG.camera.follow(_mouseWrapper, TOPDOWN, 0.1);
+		setOrdersState();
 	}
 
 	private function resetPlayerPlayMode()
@@ -259,7 +287,8 @@ class PlayState extends FlxState
 		_player.acceleration.y = 2000;
 		_player.velocity.x = _player.velocity.y = 0;
 		_player.setPosition(_levels[_currentLevelIndex]._playerInitX, _levels[_currentLevelIndex]._playerInitY);
-		_player.giveInstructions(_selectedInstructionList);
+		_player.giveInstructions(flattenSubInstruction());
+		unsetOrdersState();
 		FlxG.camera.follow(_player, PLATFORMER, 1);
 		_inViewMode = false;
 	}
