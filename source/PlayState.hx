@@ -1,6 +1,7 @@
 package;
 
 import flixel.FlxG;
+import flixel.group.FlxGroup;
 import flixel.FlxState;
 import flixel.tile.FlxTilemap;
 import openfl.Assets;
@@ -55,17 +56,17 @@ class PlayState extends FlxState
 		loadlevelsFromFile(FIRST_LEVEL_NAME);
 		loadNextLevel();
 
-
-
 		// TEST CODE:
-		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION.clone());
-		_selectedInstructionList.add(JUMP_RIGHT_INSTRUCTION.clone());
-		_selectedInstructionList.add(JUMP_RIGHT_INSTRUCTION.clone());
-		
-		
-		_selectedInstructionList.add(IDLE_INSTRUCTION.clone());
-		_selectedInstructionList.add(WALK_LEFT_INSTRUCTION.clone());
-
+		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(JUMP_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(JUMP_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(IDLE_INSTRUCTION);
+		_selectedInstructionList.add(WALK_LEFT_INSTRUCTION);
+		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
+		_selectedInstructionList.add(WALK_RIGHT_INSTRUCTION);
 		// Reset player
 		resetPlayerViewMode();
 	}
@@ -77,16 +78,23 @@ class PlayState extends FlxState
 		FlxG.collide(_collisionMap, _player);
 		_mouseWrapper.setPosition(FlxG.mouse.getWorldPosition().x, FlxG.mouse.getWorldPosition().y);
 		// Player dies! Reset!
-		if (_player.getPosition().y > _levels[_currentLevelIndex]._height || _player.getPosition().x > _levels[_currentLevelIndex]._width )
+		if (_player.getPosition().y > _levels[_currentLevelIndex]._height)
 		{
 			resetPlayerViewMode();
+		}
+		if (_player.getPosition().x < 0 )
+		{
+			_player.setPosition(0, _player.getPosition().y);
+		}
+		if (_player.getPosition().x > _levels[_currentLevelIndex]._width - _player.width)
+		{
+			_player.setPosition(_levels[_currentLevelIndex]._width - _player.width, _player.getPosition().y);
 		}
 		if (_inViewMode && FlxG.keys.anyPressed([SPACE]))
 		{
 			resetPlayerPlayMode();
 		}
 		super.update(elapsed);
-		
 	}
 
 	private function loadlevelsFromFile(firstLevelName:String):Void{
@@ -110,8 +118,8 @@ class PlayState extends FlxState
 			levelData._height = Std.parseInt(lines[2]);
 			levelData._playerInitX = Std.parseInt(lines[3]);
 			levelData._playerInitY = Std.parseInt(lines[4]);
+			
 			curLevelName = lines[5];
-
 			_levels.push(levelData);
 		} while(curLevelName != "end");
 	}
@@ -137,6 +145,7 @@ class PlayState extends FlxState
 
 	private function initInstructions():Void
 	{
+		// Instructions that can be copied and then given to the player's instruction list.
 		WALK_LEFT_INSTRUCTION = new Instruction("Walk Left", 2, -200, 0, true);
 		WALK_RIGHT_INSTRUCTION = new Instruction("Walk Right", 2, 200, 0, false);
 		JUMP_RIGHT_INSTRUCTION = new Instruction("Jump Right", 1.25, 200, -1000, false);
@@ -153,6 +162,7 @@ class PlayState extends FlxState
 		_player.facing;
 		_inViewMode = true;
 		_player.clearInstructions();
+		FlxG.camera.focusOn(_player.getPosition());
 		FlxG.camera.follow(_mouseWrapper, TOPDOWN, 0.1);
 	}
 
