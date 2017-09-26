@@ -88,6 +88,11 @@ class Player extends FlxSprite {
         velocity.set(_speed, velocity.y);
     }
 
+    public function isFinished():Bool
+    {
+        return _instructionList.isEmpty() && (_instructionTimer < 0.0);
+    }
+
     public function giveInstructions(newInstructions:List<Instruction>):Void
     {
         _instructionList = new List<Instruction>();
@@ -107,5 +112,10 @@ class Player extends FlxSprite {
     public function setActive(active:Bool):Void
     {
         _isActive = active;
+    }
+
+    public function isActive():Bool
+    {
+        return _isActive;
     }
 }
