@@ -216,14 +216,10 @@ class PlayState extends FlxState
 				_bulletGroup.remove(bullet);
 			}
 		}
-<<<<<<< HEAD
 		if (!_inViewMode && FlxG.keys.anyPressed([ESCAPE]))
 		{
 			resetPlayerViewMode();
 		}
-=======
-
->>>>>>> 78815f24408587d667fb2b1e7edc525820143ae0
 		super.update(elapsed);
 	}
 
@@ -283,7 +279,7 @@ class PlayState extends FlxState
 
 	private function unsetOrdersState()
 	{
-		//TODO: Make all the orders UI stuff invisible here.
+		//Make all the orders UI stuff invisible here.
 		_orderDisplay.exists = false;
 		_rollLeft.exists = false;
 		_rollRight.exists = false;
@@ -349,7 +345,7 @@ class PlayState extends FlxState
 							tempList.add(WALK_LEFT_INSTRUCTION);
 						case "jr":
 							tempList.add(JUMP_RIGHT_INSTRUCTION);
-						case "Jl":
+						case "jl":
 							tempList.add(JUMP_LEFT_INSTRUCTION);
 						case "idl":
 							tempList.add(IDLE_INSTRUCTION);
@@ -409,11 +405,11 @@ class PlayState extends FlxState
 	private function initInstructions():Void
 	{
 		// Instructions that can be copied and then given to the player's instruction list.
-		WALK_LEFT_INSTRUCTION = new Instruction("←", 2, -250, 0, true);
-		WALK_RIGHT_INSTRUCTION = new Instruction("→", 2, 250, 0, false);
-		JUMP_RIGHT_INSTRUCTION = new Instruction("↗", 1.25, 250, -1250, false);
-		JUMP_LEFT_INSTRUCTION = new Instruction("↖", 1.25, -250, -1250, true);
-		IDLE_INSTRUCTION = new Instruction("0", 2, 0, 0, false);
+		WALK_LEFT_INSTRUCTION = new Instruction("←", 0.5, -256, 0, true);
+		WALK_RIGHT_INSTRUCTION = new Instruction("→", 0.5, 256, 0, false);
+		JUMP_RIGHT_INSTRUCTION = new Instruction("↗", 1.5, 256, -768, false);
+		JUMP_LEFT_INSTRUCTION = new Instruction("↖", 1.5, -256, -768, true);
+		IDLE_INSTRUCTION = new Instruction("0", 0.5, 0, 0, false);
 		INTERACT_INSTRUCTION = new Instruction("I", 0.5, 0, 0, false, true);
 	}
 
@@ -443,7 +439,7 @@ class PlayState extends FlxState
 	{
 		_player.setActive(true);
 		_player.alpha = 1;
-		_player.acceleration.y = 2000;
+		_player.acceleration.y = 1024;
 		_player.velocity.x = _player.velocity.y = 0;
 		_player.setPosition(_levels[_currentLevelIndex]._playerInitX, _levels[_currentLevelIndex]._playerInitY);
 		_player.giveInstructions(flattenSubInstruction());
