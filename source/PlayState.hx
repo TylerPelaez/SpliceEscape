@@ -144,17 +144,7 @@ class PlayState extends FlxState
 
 		loadlevelsFromFile(FIRST_LEVEL_NAME);
 		loadNextLevel();
-
-		// TEST CODE:
-		_availableInstructionList.insert(0,new List<Instruction>());
-		_availableInstructionList[0].add(JUMP_RIGHT_INSTRUCTION);
-		_availableInstructionList[0].add(JUMP_RIGHT_INSTRUCTION);
-		_availableInstructionList.insert(0,new List<Instruction>());
-		_availableInstructionList[0].add(WALK_RIGHT_INSTRUCTION);
-		_availableInstructionList[0].add(WALK_RIGHT_INSTRUCTION);
-		_availableInstructionList.insert(0,new List<Instruction>());
-		_availableInstructionList[0].add(IDLE_INSTRUCTION);
-		_availableInstructionList[0].add(WALK_RIGHT_INSTRUCTION);
+		
 		// Reset player
 		resetPlayerViewMode();
 	}
@@ -181,6 +171,10 @@ class PlayState extends FlxState
 		if (_inViewMode && FlxG.keys.anyPressed([SPACE]))
 		{
 			resetPlayerPlayMode();
+		}
+		if (!_inViewMode && FlxG.keys.anyPressed([ESCAPE]))
+		{
+			resetPlayerViewMode();
 		}
 		super.update(elapsed);
 	}
@@ -259,8 +253,9 @@ class PlayState extends FlxState
 		do 
 		{
 			var fullPath:String = "assets/data/" + curLevelName + ".txt";
+			var ordersPath:String = "assets/data/" + curLevelName + "order.txt";
 
-			if (Assets.exists(fullPath))
+			if (Assets.exists(fullPath) && Assets.exists(ordersPath))
 				lines = Assets.getText(fullPath).split("|");
 			else 
 				return;
@@ -274,6 +269,32 @@ class PlayState extends FlxState
 			levelData._playerInitX = Std.parseInt(lines[3]);
 			levelData._playerInitY = Std.parseInt(lines[4]);
 			
+			var olines:Array<String> = Assets.getText(ordersPath).split("$");
+			for(subg in olines)
+			{
+				var tempList:List<Instruction> = new List<Instruction>();
+				var instrs:Array<String> = subg.split("|");
+				for(ins in instrs)
+				{
+					switch ins
+					{
+						case "wr":
+							tempList.add(WALK_RIGHT_INSTRUCTION);
+						case "wl":
+							tempList.add(WALK_LEFT_INSTRUCTION);
+						case "jr":
+							tempList.add(JUMP_RIGHT_INSTRUCTION);
+						case "Jl":
+							tempList.add(JUMP_LEFT_INSTRUCTION);
+						case "idl":
+							tempList.add(IDLE_INSTRUCTION);
+						case "int":
+							tempList.add(INTERACT_INSTRUCTION);
+					}
+				}
+				levelData._availInstr.push(tempList);
+			}
+
 			curLevelName = lines[5];
 			_levels.push(levelData);
 		} while(curLevelName != "end");
@@ -296,6 +317,7 @@ class PlayState extends FlxState
 		_collisionMap.loadMapFromCSV(CSVPath, TILEMAP_PATH, TILE_WIDTH, TILE_HEIGHT);
 		// Kill player on collision with red tile(test for barbed wire)
 		_collisionMap.setTileProperties(2,FlxObject.ANY,function(o1:FlxObject,o2:FlxObject){resetPlayerViewMode();});
+		_availableInstructionList = _levels[_currentLevelIndex]._availInstr;
 	}
 
 	private function initInstructions():Void
