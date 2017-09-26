@@ -191,6 +191,19 @@ class PlayState extends FlxState
 				resetPlayerViewMode();
 			}
 
+			if (_player._interacting)
+			{
+				var leverItr = _leverGroup.iterator()
+				for (lever in leverItr)
+				{
+					if (FlxG.overlap(lever, _player))
+					{
+						lever.flipLever();
+					}
+				}
+				_player._interacting = false;
+			}
+
 			// Ensure player doesn't escape level.
 			if (_player.getPosition().x < 0 )
 			{
