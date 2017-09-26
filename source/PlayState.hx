@@ -9,6 +9,7 @@ import flixel.FlxSprite;
 import flixel.FlxObject;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
+import flixel.math.FlxRect;
 
 class PlayState extends FlxState
 {
@@ -18,13 +19,13 @@ class PlayState extends FlxState
 	private static var TILEMAP_PATH:String = "assets/images/tilemap_v1.png";
 	private static var FIRST_LEVEL_NAME:String = "test";
 	// Constants for orders button roll
-	private static var ROLL_X:Int = 50;
-	private static var ROLL_Y:Int = 50;
+	private static var ROLL_X:Int = 150;
+	private static var ROLL_Y:Int = 150;
 	private static var ROLL_SCALE:Int = 2;
 	private static var ROLL_COUNT:Int = 4;
-	private static var ROLL_SPACING:Int = 200;
+	private static var ROLL_SPACING:Int = 150;
 	private static var ROLL_PIXELS:Int = 16;
-	private static var ROLL_SELECT_DROP:Int = 200;
+	private static var ROLL_SELECT_DROP:Int = 150;
 	private static var SELECT_PIXELS:Int = 16;	
 	// Instructions to be initialized in create()
 	// After player chooses instructions - copies will be made and added to 
@@ -318,6 +319,7 @@ class PlayState extends FlxState
 		_player.clearInstructions();
 		FlxG.camera.focusOn(_player.getPosition());
 		FlxG.camera.follow(_mouseWrapper, TOPDOWN, 0.1);
+		FlxG.camera.deadzone = new FlxRect(100,100,1080,520);
 		setOrdersState();
 	}
 
