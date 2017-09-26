@@ -54,6 +54,7 @@ class PlayState extends FlxState
 	private var _orders:Array<FlxButton>;
 	private var _rollLeft:FlxButton;
 	private var _rollRight:FlxButton;
+	private var _removeOrder:FlxButton;
 	private var _orderBase:Int;
 
 
@@ -87,12 +88,12 @@ class PlayState extends FlxState
 		_rollRight.scale.y = ROLL_SCALE;
 		_rollRight.label.size = ROLL_PIXELS;
 		_rollRight.label.systemFont = "Arial";
-		_rollRight.x = ROLL_X + (ROLL_COUNT)*ROLL_SPACING;
+		_rollRight.x = ROLL_X + (ROLL_COUNT + 1)*ROLL_SPACING;
 		_rollRight.label.fieldWidth = _rollRight.width;
 		_rollRight.label.alignment = "center";
 		//_rollRight.exists = false;
 
-		_rollLeft = new FlxButton(0,ROLL_X,"←",function(){_orderBase--;setOrdersState();});
+		_rollLeft = new FlxButton(0,ROLL_Y,"←",function(){_orderBase--;setOrdersState();});
 		_rollLeft.scale.y = ROLL_SCALE;
 		_rollLeft.label.size = ROLL_PIXELS;
 		_rollLeft.label.systemFont = "Arial";
@@ -101,10 +102,26 @@ class PlayState extends FlxState
 		_rollLeft.label.alignment = "center";
 		//_rollRight.exists = false;
 
+		_removeOrder = new FlxButton(ROLL_X,ROLL_Y + ROLL_SELECT_DROP / 2,"Remove",function(){
+			if(_subInstructionList.length > 0)
+			{
+				//Is a popBack() really too much to ask here?
+				var ilist:List<Instruction> = _subInstructionList.last();
+				_subInstructionList.remove(ilist);
+				_availableInstructionList.push(ilist);
+				setOrdersState();
+			}
+		});
+		_removeOrder.scale.y = _removeOrder.scale.x = ROLL_SCALE;
+		_removeOrder.label.size = ROLL_PIXELS;
+		_removeOrder.label.systemFont = "Arial";
+		_removeOrder.label.fieldWidth = _removeOrder.width;
+		_removeOrder.label.alignment = "center";
+
 		//Generate ROLL_COUNT buttons, set them to be scaled and formatted appropriately.
-		for(i in 0...ROLL_COUNT - 1)
+		for(i in 0...ROLL_COUNT)
 		{
-			_orders.insert(0,new FlxButton(ROLL_X +(i+1)*ROLL_SPACING,ROLL_Y,""));
+			_orders.insert(0,new FlxButton(ROLL_X +(ROLL_COUNT - i)*ROLL_SPACING,ROLL_Y,""));
 			_orders[0].scale.x = _orders[0].scale.y = ROLL_SCALE;
 			_orders[0].label.size = ROLL_PIXELS;
 			_orders[0].label.systemFont = "Arial";
@@ -114,6 +131,7 @@ class PlayState extends FlxState
 			add(_orders[0]);
 		}
 
+		add(_removeOrder);
 		add(_rollLeft);
 		add(_rollRight);
 		add(_orderDisplay);
