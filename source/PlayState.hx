@@ -157,17 +157,7 @@ class PlayState extends FlxState
 
 		loadlevelsFromFile(FIRST_LEVEL_NAME);
 		loadNextLevel();
-
-		// TEST CODE:
-		_availableInstructionList.insert(0,new List<Instruction>());
-		_availableInstructionList[0].add(JUMP_RIGHT_INSTRUCTION);
-		_availableInstructionList[0].add(JUMP_RIGHT_INSTRUCTION);
-		_availableInstructionList.insert(0,new List<Instruction>());
-		_availableInstructionList[0].add(WALK_RIGHT_INSTRUCTION);
-		_availableInstructionList[0].add(WALK_RIGHT_INSTRUCTION);
-		_availableInstructionList.insert(0,new List<Instruction>());
-		_availableInstructionList[0].add(IDLE_INSTRUCTION);
-		_availableInstructionList[0].add(WALK_RIGHT_INSTRUCTION);
+		
 		// Reset player
 		resetPlayerViewMode();
 	}
@@ -181,6 +171,10 @@ class PlayState extends FlxState
 		FlxG.collide(_collisionMap, _player);
 		if (!_inViewMode)
 		{
+			if (FlxG.keys.anyPressed([ESCAPE]))
+			{
+				resetPlayerViewMode();
+			}
 			// Player died or is out of orders! Reset!
 			if (FlxG.collide(_bulletGroup, _player))
 			{
@@ -189,6 +183,19 @@ class PlayState extends FlxState
 			if (_player.getPosition().y > _levels[_currentLevelIndex]._height || _player.isFinished())
 			{
 				resetPlayerViewMode();
+			}
+
+			if (_player._interacting)
+			{
+				var leverItr = _leverGroup.iterator();
+				for (lever in leverItr)
+				{
+					if (FlxG.overlap(lever, _player))
+					{
+						lever.flipLever();
+					}
+				}
+				_player._interacting = false;
 			}
 
 			// Ensure player doesn't escape level.
@@ -226,7 +233,10 @@ class PlayState extends FlxState
 				_bulletGroup.remove(bullet);
 			}
 		}
-
+		if (!_inViewMode && FlxG.keys.anyPressed([ESCAPE]))
+		{
+			resetPlayerViewMode();
+		}
 		super.update(elapsed);
 	}
 
@@ -286,7 +296,7 @@ class PlayState extends FlxState
 
 	private function unsetOrdersState()
 	{
-		//TODO: Make all the orders UI stuff invisible here.
+		//Make all the orders UI stuff invisible here.
 		_orderDisplay.exists = false;
 		_rollLeft.exists = false;
 		_rollRight.exists = false;
@@ -304,8 +314,9 @@ class PlayState extends FlxState
 		do 
 		{
 			var fullPath:String = "assets/data/" + curLevelName + ".txt";
+			var ordersPath:String = "assets/data/" + curLevelName + "order.txt";
 
-			if (Assets.exists(fullPath))
+			if (Assets.exists(fullPath) && Assets.exists(ordersPath))
 				lines = Assets.getText(fullPath).split("|");
 			else 
 				return;
@@ -336,6 +347,32 @@ class PlayState extends FlxState
 				}
 			}
 			
+			var olines:Array<String> = Assets.getText(ordersPath).split("$");
+			for(subg in olines)
+			{
+				var tempList:List<Instruction> = new List<Instruction>();
+				var instrs:Array<String> = subg.split("|");
+				for(ins in instrs)
+				{
+					switch ins
+					{
+						case "wr":
+							tempList.add(WALK_RIGHT_INSTRUCTION);
+						case "wl":
+							tempList.add(WALK_LEFT_INSTRUCTION);
+						case "jr":
+							tempList.add(JUMP_RIGHT_INSTRUCTION);
+						case "jl":
+							tempList.add(JUMP_LEFT_INSTRUCTION);
+						case "idl":
+							tempList.add(IDLE_INSTRUCTION);
+						case "int":
+							tempList.add(INTERACT_INSTRUCTION);
+					}
+				}
+				levelData._availInstr.push(tempList);
+			}
+
 			curLevelName = lines[5];
 			_levels.push(levelData);
 		} while(curLevelName != "end");
@@ -379,16 +416,17 @@ class PlayState extends FlxState
 		_collisionMap.loadMapFromCSV(CSVPath, TILEMAP_PATH, TILE_WIDTH, TILE_HEIGHT);
 		// Kill player on collision with red tile(test for barbed wire)
 		_collisionMap.setTileProperties(2,FlxObject.ANY,function(o1:FlxObject,o2:FlxObject){resetPlayerViewMode();});
+		_availableInstructionList = _levels[_currentLevelIndex]._availInstr;
 	}
 
 	private function initInstructions():Void
 	{
 		// Instructions that can be copied and then given to the player's instruction list.
-		WALK_LEFT_INSTRUCTION = new Instruction("←", 2, -250, 0, true);
-		WALK_RIGHT_INSTRUCTION = new Instruction("→", 2, 250, 0, false);
-		JUMP_RIGHT_INSTRUCTION = new Instruction("↗", 1.25, 250, -1250, false);
-		JUMP_LEFT_INSTRUCTION = new Instruction("↖", 1.25, -250, -1250, true);
-		IDLE_INSTRUCTION = new Instruction("0", 2, 0, 0, false);
+		WALK_LEFT_INSTRUCTION = new Instruction("←", 0.5, -256, 0, true);
+		WALK_RIGHT_INSTRUCTION = new Instruction("→", 0.5, 256, 0, false);
+		JUMP_RIGHT_INSTRUCTION = new Instruction("↗", 1.5, 256, -768, false);
+		JUMP_LEFT_INSTRUCTION = new Instruction("↖", 1.5, -256, -768, true);
+		IDLE_INSTRUCTION = new Instruction("0", 0.5, 0, 0, false);
 		INTERACT_INSTRUCTION = new Instruction("I", 0.5, 0, 0, false, true);
 	}
 
@@ -398,6 +436,16 @@ class PlayState extends FlxState
 		_bulletGroup.kill();
 		_bulletGroup = new FlxTypedGroup<FlxSprite>();
 		add(_bulletGroup);
+	}
+
+	private function restartTurretGroup():Void
+	{
+		// To ensure bullets will always be in the same place every single run.
+		var turretItr = _turretGroup.iterator();
+		for (turret in turretItr)
+		{
+			turret.restartCooldown();
+		}
 	}
 
 	private function resetPlayerViewMode()
@@ -414,17 +462,20 @@ class PlayState extends FlxState
 		setOrdersState();
 	}
 
+	
+
 	private function resetPlayerPlayMode()
 	{
 		_player.setActive(true);
 		_player.alpha = 1;
-		_player.acceleration.y = 2000;
+		_player.acceleration.y = 1024;
 		_player.velocity.x = _player.velocity.y = 0;
 		_player.setPosition(_levels[_currentLevelIndex]._playerInitX, _levels[_currentLevelIndex]._playerInitY);
 		_player.giveInstructions(flattenSubInstruction());
 		unsetOrdersState();
 		FlxG.camera.follow(_player, PLATFORMER, 1);
 		resetBulletGroup();
+		restartTurretGroup();
 		_inViewMode = false;
 	}
 }

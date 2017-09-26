@@ -29,6 +29,11 @@ class Turret extends FlxSprite
         _isActive = newActive;
     }
 
+    public function restartCooldown():Void
+    {
+        _cooldownTimer = 0.0;
+    }
+
     public function fire():FlxSprite
     {
         if (!_isActive || _cooldownTimer > 0.0)

@@ -20,6 +20,7 @@ class Player extends FlxSprite {
     private var _currentInstruction:Instruction;
     private var _speed:Float;
     private var _isActive:Bool;
+    public var _interacting:Bool;
 
     // Sounds
     private var _sndEngine:FlxSound;
@@ -33,6 +34,7 @@ class Player extends FlxSprite {
 
         setFacingFlip(FlxObject.LEFT, true, false);
 		setFacingFlip(FlxObject.RIGHT, false, false);
+        _interacting = false;
 
         acceleration.y = 750; // Gravity is positive because Y increases downwards.
 
@@ -76,6 +78,9 @@ class Player extends FlxSprite {
             if(_currentInstruction._assignVelocityY < 0.0)
             {
                 _sndJump.play();
+            } else if (_currentInstruction._interact = true)
+            {
+                _interacting = true;
             }
         } else
         {
