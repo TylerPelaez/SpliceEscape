@@ -171,6 +171,10 @@ class PlayState extends FlxState
 		FlxG.collide(_collisionMap, _player);
 		if (!_inViewMode)
 		{
+			if (FlxG.keys.anyPressed([ESCAPE]))
+			{
+				resetPlayerViewMode();
+			}
 			// Player died or is out of orders! Reset!
 			if (FlxG.collide(_bulletGroup, _player))
 			{
@@ -183,7 +187,7 @@ class PlayState extends FlxState
 
 			if (_player._interacting)
 			{
-				var leverItr = _leverGroup.iterator()
+				var leverItr = _leverGroup.iterator();
 				for (lever in leverItr)
 				{
 					if (FlxG.overlap(lever, _player))
@@ -229,14 +233,6 @@ class PlayState extends FlxState
 				_bulletGroup.remove(bullet);
 			}
 		}
-<<<<<<< HEAD
-		if (!_inViewMode && FlxG.keys.anyPressed([ESCAPE]))
-		{
-			resetPlayerViewMode();
-		}
-=======
-
->>>>>>> 78815f24408587d667fb2b1e7edc525820143ae0
 		super.update(elapsed);
 	}
 
