@@ -171,6 +171,10 @@ class PlayState extends FlxState
 		FlxG.collide(_collisionMap, _player);
 		if (!_inViewMode)
 		{
+			if (FlxG.keys.anyPressed([ESCAPE]))
+			{
+				resetPlayerViewMode();
+			}
 			// Player died or is out of orders! Reset!
 			if (FlxG.collide(_bulletGroup, _player))
 			{
@@ -179,6 +183,19 @@ class PlayState extends FlxState
 			if (_player.getPosition().y > _levels[_currentLevelIndex]._height || _player.isFinished())
 			{
 				resetPlayerViewMode();
+			}
+
+			if (_player._interacting)
+			{
+				var leverItr = _leverGroup.iterator();
+				for (lever in leverItr)
+				{
+					if (FlxG.overlap(lever, _player))
+					{
+						lever.flipLever();
+					}
+				}
+				_player._interacting = false;
 			}
 
 			// Ensure player doesn't escape level.
@@ -421,6 +438,16 @@ class PlayState extends FlxState
 		add(_bulletGroup);
 	}
 
+	private function restartTurretGroup():Void
+	{
+		// To ensure bullets will always be in the same place every single run.
+		var turretItr = _turretGroup.iterator();
+		for (turret in turretItr)
+		{
+			turret.restartCooldown();
+		}
+	}
+
 	private function resetPlayerViewMode()
 	{
 		resetPlayerPlayMode();
@@ -435,6 +462,8 @@ class PlayState extends FlxState
 		setOrdersState();
 	}
 
+	
+
 	private function resetPlayerPlayMode()
 	{
 		_player.setActive(true);
@@ -446,6 +475,7 @@ class PlayState extends FlxState
 		unsetOrdersState();
 		FlxG.camera.follow(_player, PLATFORMER, 1);
 		resetBulletGroup();
+		restartTurretGroup();
 		_inViewMode = false;
 	}
 }
