@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
+import flixel.system.FlxSound;
 
 // enum Instructions {
 //     Idle;
@@ -20,6 +21,10 @@ class Player extends FlxSprite {
     private var _speed:Float;
     private var _isActive:Bool;
 
+    // Sounds
+    private var _sndEngine:FlxSound;
+    private var _sndJump:FlxSound;
+
     public function new() {
         super();
         loadGraphic("assets/images/duck.png", true, 100, 114);
@@ -30,6 +35,9 @@ class Player extends FlxSprite {
 		setFacingFlip(FlxObject.RIGHT, false, false);
 
         acceleration.y = 750; // Gravity is positive because Y increases downwards.
+
+        _sndEngine = FlxG.sound.load(AssetPaths.RobotEngine__wav);
+        _sndJump = FlxG.sound.load(AssetPaths.JumpA__wav);
     }
 
     override public function update(elapsed:Float):Void {
@@ -38,7 +46,11 @@ class Player extends FlxSprite {
         {
             updateInstruction(elapsed);
 		    movement();
+
+            _sndEngine.play();
         }
+        else
+            _sndEngine.pause();
         super.update(elapsed);
     }
 
@@ -59,6 +71,12 @@ class Player extends FlxSprite {
             velocity.set(_speed, _currentInstruction._assignVelocityY);
             _instructionTimer = _currentInstruction._duration;
             facing = _currentInstruction._facingLeft ? FlxObject.LEFT : FlxObject.RIGHT;
+
+            // Check if the action is a jump, and if it is, make a jump sound.
+            if(_currentInstruction._assignVelocityY < 0.0)
+            {
+                _sndJump.play();
+            }
         } else
         {
             _speed = 0;
