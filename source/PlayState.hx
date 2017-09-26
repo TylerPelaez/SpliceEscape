@@ -434,6 +434,16 @@ class PlayState extends FlxState
 		add(_bulletGroup);
 	}
 
+	private function restartTurretGroup():Void
+	{
+		// To ensure bullets will always be in the same place every single run.
+		var turretItr = _turretGroup.iterator();
+		for (turret in turretItr)
+		{
+			turret.restartCooldown();
+		}
+	}
+
 	private function resetPlayerViewMode()
 	{
 		resetPlayerPlayMode();
@@ -448,6 +458,8 @@ class PlayState extends FlxState
 		setOrdersState();
 	}
 
+	
+
 	private function resetPlayerPlayMode()
 	{
 		_player.setActive(true);
@@ -459,6 +471,7 @@ class PlayState extends FlxState
 		unsetOrdersState();
 		FlxG.camera.follow(_player, PLATFORMER, 1);
 		resetBulletGroup();
+		restartTurretGroup();
 		_inViewMode = false;
 	}
 }
