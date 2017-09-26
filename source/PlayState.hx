@@ -78,6 +78,7 @@ class PlayState extends FlxState
 		_orderDisplay.size = SELECT_PIXELS;
 		_orderDisplay.systemFont = "Arial";
 		_orderDisplay.fieldWidth = 400;
+		_orderDisplay.scrollFactor.set(0,0);
 		//_orderDisplay.exists = false;
 
 		_orders = new Array<FlxButton>();
@@ -185,7 +186,10 @@ class PlayState extends FlxState
 
 	private function setOrdersState()
 	{
-		//TODO: Make orders UI visible here
+		_orderDisplay.exists = true;
+		_rollLeft.exists = true;
+		_rollRight.exists = true;
+		_removeOrder.exists = true;
 		for(i in 0...ROLL_COUNT)
 		{
 			_orders[i].label.text = "";
@@ -237,6 +241,14 @@ class PlayState extends FlxState
 	private function unsetOrdersState()
 	{
 		//TODO: Make all the orders UI stuff invisible here.
+		_orderDisplay.exists = false;
+		_rollLeft.exists = false;
+		_rollRight.exists = false;
+		_removeOrder.exists = false;
+		for(i in 0...ROLL_COUNT)
+		{
+			_orders[i].exists = false;
+		}
 	}
 
 	private function loadlevelsFromFile(firstLevelName:String):Void{
