@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
+import flixel.system.FlxSound;
 
 // enum Instructions {
 //     Idle;
@@ -20,6 +21,8 @@ class Player extends FlxSprite {
     private var _speed:Float;
     private var _isActive:Bool;
 
+    private var _sndEngine:FlxSound;
+
     public function new() {
         super();
         loadGraphic("assets/images/duck.png", true, 100, 114);
@@ -30,6 +33,8 @@ class Player extends FlxSprite {
 		setFacingFlip(FlxObject.RIGHT, false, false);
 
         acceleration.y = 750; // Gravity is positive because Y increases downwards.
+
+        _sndEngine = FlxG.sound.load(AssetPaths.RobotEngine__wav);
     }
 
     override public function update(elapsed:Float):Void {
@@ -38,7 +43,11 @@ class Player extends FlxSprite {
         {
             updateInstruction(elapsed);
 		    movement();
+
+            _sndEngine.play();
         }
+        else
+            _sndEngine.pause();
         super.update(elapsed);
     }
 
