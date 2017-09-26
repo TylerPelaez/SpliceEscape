@@ -18,14 +18,14 @@ class PlayState extends FlxState
 	private static var TILEMAP_PATH:String = "assets/images/test_tilemap.png";
 	private static var FIRST_LEVEL_NAME:String = "test";
 	// Constants for orders button roll
-	private static var ROLL_X = 50;
-	private static var ROLL_Y = 50;
-	private static var ROLL_SCALE = 2;
-	private static var ROLL_COUNT = 4;
-	private static var ROLL_SPACING = 50;
-	private static var ROLL_PIXELS = 32;
-	private static var ROLL_SELECT_DROP = 200;
-	private static var SELECT_PIXELS = 32;	
+	private static var ROLL_X:Int = 50;
+	private static var ROLL_Y:Int = 50;
+	private static var ROLL_SCALE:Int = 2;
+	private static var ROLL_COUNT:Int = 4;
+	private static var ROLL_SPACING:Int = 200;
+	private static var ROLL_PIXELS:Int = 16;
+	private static var ROLL_SELECT_DROP:Int = 200;
+	private static var SELECT_PIXELS:Int = 16;	
 	// Instructions to be initialized in create()
 	// After player chooses instructions - copies will be made and added to 
 	// the player instruction list.
@@ -74,31 +74,42 @@ class PlayState extends FlxState
 		_orderDisplay = new FlxText();
 		_orderDisplay.x = ROLL_X;
 		_orderDisplay.y = ROLL_Y + ROLL_SELECT_DROP;
-		_orderDisplay.setFormat("arial",SELECT_PIXELS);
+		_orderDisplay.size = SELECT_PIXELS;
+		_orderDisplay.systemFont = "Arial";
+		_orderDisplay.fieldWidth = 400;
 		//_orderDisplay.exists = false;
 
 		_orders = new Array<FlxButton>();
 
 		_orderBase = 0;
 		
-		_rollRight = new FlxButton(0,ROLL_Y,"→",function(){_orderBase++;});
+		_rollRight = new FlxButton(0,ROLL_Y,"→",function(){_orderBase++;setOrdersState();});
 		_rollRight.scale.y = ROLL_SCALE;
-		_rollRight.label.setFormat("arial",ROLL_PIXELS);
-		_rollRight.x = ROLL_X + (ROLL_COUNT + 2)*ROLL_SPACING;
+		_rollRight.label.size = ROLL_PIXELS;
+		_rollRight.label.systemFont = "Arial";
+		_rollRight.x = ROLL_X + (ROLL_COUNT)*ROLL_SPACING;
+		_rollRight.label.fieldWidth = _rollRight.width;
+		_rollRight.label.alignment = "center";
 		//_rollRight.exists = false;
 
-		_rollLeft = new FlxButton(0,ROLL_X,"←",function(){_orderBase--;});
+		_rollLeft = new FlxButton(0,ROLL_X,"←",function(){_orderBase--;setOrdersState();});
 		_rollLeft.scale.y = ROLL_SCALE;
-		_rollLeft.label.setFormat("arial",ROLL_PIXELS);
+		_rollLeft.label.size = ROLL_PIXELS;
+		_rollLeft.label.systemFont = "Arial";
 		_rollLeft.x = ROLL_X;
+		_rollLeft.label.fieldWidth =_rollLeft.width;
+		_rollLeft.label.alignment = "center";
 		//_rollRight.exists = false;
 
 		//Generate ROLL_COUNT buttons, set them to be scaled and formatted appropriately.
-		for(i in 0...ROLL_COUNT)
+		for(i in 0...ROLL_COUNT - 1)
 		{
-			_orders.insert(0,new FlxButton(ROLL_X +(ROLL_COUNT + 1)*ROLL_SPACING - i,ROLL_Y,""));
+			_orders.insert(0,new FlxButton(ROLL_X +(i+1)*ROLL_SPACING,ROLL_Y,""));
 			_orders[0].scale.x = _orders[0].scale.y = ROLL_SCALE;
-			_orders[0].label.setFormat("arial",ROLL_PIXELS);
+			_orders[0].label.size = ROLL_PIXELS;
+			_orders[0].label.systemFont = "Arial";
+			_orders[0].label.fieldWidth =_orders[0].width;
+			_orders[0].label.alignment = "center";
 			//_orders[0].exists = false;
 			add(_orders[0]);
 		}
@@ -165,13 +176,13 @@ class PlayState extends FlxState
 			//If in range, bind the button to adding the order list and add its text to the button.
 			if(i+_orderBase < _availableInstructionList.length && i+_orderBase >= 0)
 			{
-				for(ins in _availableInstructionList[i])
+				for(ins in _availableInstructionList[i+_orderBase])
 				{
 					_orders[i].label.text += ins._name;
 				}
 				_orders[i].onUp.callback = function(){
-					_subInstructionList.add(_availableInstructionList[i]);
-					_availableInstructionList.remove(_availableInstructionList[i]);
+					_subInstructionList.add(_availableInstructionList[i+_orderBase]);
+					_availableInstructionList.remove(_availableInstructionList[i+_orderBase]);
 					//Set the orders buttons again
 					setOrdersState();
 				}
