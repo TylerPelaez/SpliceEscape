@@ -43,15 +43,15 @@ class Player extends FlxSprite {
     public function new() {
         super();
         loadGraphic("assets/images/packedSpriteSheet.png", true, 128, 128);
-        animation.add("WalkRight", [32, 33], ANIMATION_FRAMERATE, true, false, false);
-        animation.add("WalkLeft", [32, 33], ANIMATION_FRAMERATE, true, true, false);
-        animation.add("Idle", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], ANIMATION_FRAMERATE, true, false, false);
-        animation.add("JumpRight", [12, 13, 14, 15, 16, 17, 18, 19], ANIMATION_FRAMERATE, false, false, false );
-        animation.add("JumpLeft", [12, 13, 14, 15, 16, 17, 18, 19], ANIMATION_FRAMERATE, false, true, false );
-        animation.add("FlipSwitchRight", [22, 23, 26, 27, 30], ANIMATION_FRAMERATE, false, false, false);
-        animation.add("FlipSwitchLeft", [22, 23, 26, 27, 30], ANIMATION_FRAMERATE, false, true, false);
-        animation.add("DeathRight", [20, 21, 24, 25, 28, 29], ANIMATION_FRAMERATE, false, false, false);
-        animation.add("DeathLeft", [20, 21, 24, 25, 28, 29], ANIMATION_FRAMERATE, false, true, false);
+        animation.add("WalkRight", [0, 1], ANIMATION_FRAMERATE, true, false, false);
+        animation.add("WalkLeft", [0, 1], ANIMATION_FRAMERATE, true, true, false);
+        animation.add("Idle", [24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35], ANIMATION_FRAMERATE, true, false, false);
+        animation.add("JumpRight", [4, 5, 6, 7, 8, 9, 10, 11], ANIMATION_FRAMERATE, false, false, false );
+        animation.add("JumpLeft", [4, 5, 6, 7, 8, 9, 10, 11], ANIMATION_FRAMERATE, false, true, false );
+        animation.add("FlipSwitchRight", [14, 15, 18, 19, 22], ANIMATION_FRAMERATE, false, false, false);
+        animation.add("FlipSwitchLeft", [14, 15, 18, 19, 22], ANIMATION_FRAMERATE, false, true, false);
+        animation.add("DeathRight", [12, 13, 16, 17, 20, 21], ANIMATION_FRAMERATE, false, false, false);
+        animation.add("DeathLeft", [12, 13, 16, 17, 20, 21], ANIMATION_FRAMERATE, false, true, false);
 
 
         _instructionTimer = 0.0;
