@@ -21,6 +21,10 @@ class Player extends FlxSprite {
     private var _speed:Float;
     private var _isActive:Bool;
     public var _interacting:Bool;
+    public var _holdingBox:Bool;
+
+    private var _musicTimer:Float;
+    private var _musicOn:Bool;
 
     // Sounds
     private var _sndEngine:FlxSound;
@@ -35,24 +39,61 @@ class Player extends FlxSprite {
         setFacingFlip(FlxObject.LEFT, true, false);
 		setFacingFlip(FlxObject.RIGHT, false, false);
         _interacting = false;
+        _holdingBox = false;
 
         acceleration.y = 750; // Gravity is positive because Y increases downwards.
 
+        _musicTimer = 0.1;
+        _musicOn = false;
+
         _sndEngine = FlxG.sound.load(AssetPaths.RobotEngine__wav);
         _sndJump = FlxG.sound.load(AssetPaths.JumpA__wav);
+
+        #if !flash
+        FlxG.sound.playMusic(AssetPaths.IntroLoop3__ogg, 1, true);
+        #end
     }
 
     override public function update(elapsed:Float):Void {
-		
+
+        // Collect how much time has elapsed since last frame.
+		_musicTimer += FlxG.elapsed;
+
         if (_isActive)
         {
             updateInstruction(elapsed);
 		    movement();
 
             _sndEngine.play();
+
+            // Check out whether or not the music is at a point at which it can transition into the main theme.
+            // The intro loop is 14.521 seconds long, so it can transition at 7.2615 or 14.521 or 0.
+            // However, since HaxeFlixel is terrible, I'll have to settle for like 7.15?
+            if (_musicTimer >= 7.22 && _musicOn == false)
+            {
+                #if !flash
+                FlxG.sound.playMusic(AssetPaths.MainLoop__ogg, 1, true);
+                #end
+                _musicTimer = 0.0;
+                _musicOn = true;
+            }
+
         }
         else
+        {
             _sndEngine.pause();
+            if (_musicTimer >= 7.22 && _musicOn == false)
+            {
+                #if !flash
+                FlxG.sound.playMusic(AssetPaths.IntroLoop3__ogg,1,true);
+                #end
+                _musicTimer = 0.0;
+            }
+        }
+
+        // Only need the remainder to compare to closest beat
+        _musicTimer = _musicTimer % 7.2615;
+
         super.update(elapsed);
     }
 
@@ -63,8 +104,9 @@ class Player extends FlxSprite {
     private function updateInstruction(elapsed:Float):Void {
         _instructionTimer -= elapsed;
         //Checking if absolute y vel > 20 ensures that if we're airborne we can't get new instructions(zero air maneuverabiltiy)
-        if ( _instructionTimer > 0.0 || (velocity.y > 20 || velocity.y < -20))
+        if ( _instructionTimer > 0.0 || (Math.abs(velocity.y) > 20) )
             return;
+
 
         if (!_instructionList.isEmpty())
         {
@@ -78,7 +120,7 @@ class Player extends FlxSprite {
             if(_currentInstruction._assignVelocityY < 0.0)
             {
                 _sndJump.play();
-            } else if (_currentInstruction._interact = true)
+            } else if (_currentInstruction._interact == true)
             {
                 _interacting = true;
             }
@@ -112,6 +154,7 @@ class Player extends FlxSprite {
         _instructionList.clear();
         _instructionTimer = -1;
         _currentInstruction = null;
+        _interacting = false;
     }
 
     public function setActive(active:Bool):Void

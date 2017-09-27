@@ -9,6 +9,7 @@ class LevelData
     public var _playerInitY:Int;
     public var _availInstr:Array<List<Instruction>>;
     public var _levers:Array<Lever>;
+    public var _boxes:Array<Box>;
 
     public function new()
     {
@@ -19,5 +20,6 @@ class LevelData
         _playerInitY = 0;
         _availInstr = new Array<List<Instruction>>();
         _levers = new Array<Lever>();
+        _boxes = new Array<Box>();
     }
 }

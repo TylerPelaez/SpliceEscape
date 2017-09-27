@@ -47,6 +47,7 @@ class PlayState extends FlxState
 	private var _bulletGroup:FlxTypedGroup<FlxSprite>;
 	private var _leverGroup:FlxTypedGroup<Lever>;
 	private var _turretGroup:FlxTypedGroup<Turret>;
+	private var _boxGroup:FlxTypedGroup<Box>;
 
 	private var _selectedInstructionList:List<Instruction>;
 
@@ -82,6 +83,7 @@ class PlayState extends FlxState
 		_bulletGroup = new FlxTypedGroup<FlxSprite>();
 		_leverGroup = new FlxTypedGroup<Lever>();
 		_turretGroup = new FlxTypedGroup<Turret>();
+		_boxGroup = new FlxTypedGroup<Box>();
 
 		_orderDisplay = new FlxText();
 		_orderDisplay.x = ROLL_X;
@@ -152,8 +154,7 @@ class PlayState extends FlxState
 		add(_bulletGroup);
 		add(_leverGroup);
 		add(_turretGroup);
-
-		FlxG.camera.follow(_player, PLATFORMER, 1);
+		add(_boxGroup);
 
 		loadlevelsFromFile(FIRST_LEVEL_NAME);
 		loadNextLevel();
@@ -187,13 +188,46 @@ class PlayState extends FlxState
 
 			if (_player._interacting)
 			{
-				var leverItr = _leverGroup.iterator();
-				for (lever in leverItr)
+				if (_player._holdingBox)
 				{
-					if (FlxG.overlap(lever, _player))
+					var boxItr = _boxGroup.iterator();
+					for (box in boxItr)
 					{
-						lever.flipLever();
+						box.drop();
+						_player._holdingBox = false;
 					}
+					remove(_boxGroup);
+					add(_boxGroup);
+				} else 
+				{
+					var leverItr = _leverGroup.iterator();
+					var flippedLever:Bool = false;
+					for (lever in leverItr)
+					{
+						if (FlxG.overlap(lever, _player))
+						{
+							lever.flipLever();
+							flippedLever = true;
+							break;
+						}
+					}
+
+					if (!flippedLever)
+					{
+						var boxItr = _boxGroup.iterator();
+						for (box in boxItr)
+						{
+							if (FlxG.overlap(box, _player))
+							{
+								box.pickUp();
+								remove(_boxGroup);
+								insert(105, _boxGroup);
+								_player._holdingBox = true;
+								break;
+							}
+						}
+					}	
+					
 				}
 				_player._interacting = false;
 			}
@@ -207,10 +241,30 @@ class PlayState extends FlxState
 			{
 				_player.setPosition(_levels[_currentLevelIndex]._width - _player.width, _player.getPosition().y);
 			}
+
+			// If player is holding a box, make it follow the player.
+			if (_player._holdingBox)
+			{
+				var boxItr = _boxGroup.iterator();
+				for (box in boxItr)
+				{
+					if (box._beingHeld)
+					{
+						// Random constants to make the box be following the player
+						var newX = (_player.facing == FlxObject.LEFT) ? (_player.getPosition().x - 50) : (_player.getPosition().x + 75);
+						box.setPosition(newX, _player.getPosition().y + 20);
+					}
+				}
+			}
+
+
 		} else if (FlxG.keys.anyPressed([SPACE]))
 		{
 			resetPlayerPlayMode();
 		}
+
+		FlxG.collide(_boxGroup, _collisionMap);
+
 
 		// Fire bullets from turrets if possible.
 		var turretItr = _turretGroup.iterator();
@@ -227,7 +281,7 @@ class PlayState extends FlxState
 		var bulletItr = _bulletGroup.iterator();
 		for (bullet in bulletItr)
 		{
-			if (FlxG.collide(bullet, _collisionMap) || bullet.getPosition().x < 0 || bullet.getPosition().x > _levels[_currentLevelIndex]._width)
+			if (FlxG.collide(bullet, _collisionMap) || bullet.getPosition().x < 0 || bullet.getPosition().x > _levels[_currentLevelIndex]._width || FlxG.collide(_boxGroup))
 			{
 				bullet.kill();
 				_bulletGroup.remove(bullet);
@@ -344,6 +398,10 @@ class PlayState extends FlxState
 				{
 					var newLever = new Lever(Std.parseInt(itemInfo[1]), Std.parseInt(itemInfo[2]), Std.parseInt(itemInfo[3]), Std.parseInt(itemInfo[4]), Std.parseFloat(itemInfo[5]));
 					levelData._levers.push(newLever);
+				} else if (itemInfo[0] == "box")
+				{
+					var newBox = new Box(Std.parseInt(itemInfo[1]), Std.parseInt(itemInfo[2]));
+					levelData._boxes.push(newBox);
 				}
 			}
 			
@@ -357,17 +415,17 @@ class PlayState extends FlxState
 					switch ins
 					{
 						case "wr":
-							tempList.add(WALK_RIGHT_INSTRUCTION);
+							tempList.add(WALK_RIGHT_INSTRUCTION.clone());
 						case "wl":
-							tempList.add(WALK_LEFT_INSTRUCTION);
+							tempList.add(WALK_LEFT_INSTRUCTION.clone());
 						case "jr":
-							tempList.add(JUMP_RIGHT_INSTRUCTION);
+							tempList.add(JUMP_RIGHT_INSTRUCTION.clone());
 						case "jl":
-							tempList.add(JUMP_LEFT_INSTRUCTION);
+							tempList.add(JUMP_LEFT_INSTRUCTION.clone());
 						case "idl":
-							tempList.add(IDLE_INSTRUCTION);
-						case "int":
-							tempList.add(INTERACT_INSTRUCTION);
+							tempList.add(IDLE_INSTRUCTION.clone());
+						case "itr":
+							tempList.add(INTERACT_INSTRUCTION.clone());
 					}
 				}
 				levelData._availInstr.push(tempList);
@@ -380,14 +438,6 @@ class PlayState extends FlxState
 
 	private function loadNextLevel():Void
 	{
-		_currentLevelIndex++;
-
-		if (_currentLevelIndex == _levels.length)
-			return;
-
-		FlxG.camera.setScrollBoundsRect(0, 0, _levels[_currentLevelIndex]._width, _levels[_currentLevelIndex]._height, true);
-
-
 		// Paranoid group resetting due to a lack of understanding of how groups work.
 		resetBulletGroup();
 
@@ -401,11 +451,30 @@ class PlayState extends FlxState
 		_turretGroup = new FlxTypedGroup<Turret>();
 		add(_turretGroup);
 
+		remove(_boxGroup);
+		_boxGroup.kill();
+		_boxGroup = new FlxTypedGroup<Box>();
+		add(_boxGroup);
+		if (_currentLevelIndex > -1)
+			_levels[_currentLevelIndex] = null;
+
+		_currentLevelIndex++;
+
+		if (_currentLevelIndex == _levels.length)
+			return;
+
+		FlxG.camera.setScrollBoundsRect(0, 0, _levels[_currentLevelIndex]._width, _levels[_currentLevelIndex]._height, true);
 
 		for (lever in _levels[_currentLevelIndex]._levers)
 		{
 			_leverGroup.add(lever);
 			_turretGroup.add(lever._connectedTurret);
+		}
+
+		for (box in _levels[_currentLevelIndex]._boxes)
+		{
+			_boxGroup.add(box);
+			box.resetToInitPos();
 		}
 
 		// Using FlxTilemap enables us to display graphics AND check for 
@@ -416,6 +485,12 @@ class PlayState extends FlxState
 		_collisionMap.loadMapFromCSV(CSVPath, TILEMAP_PATH, TILE_WIDTH, TILE_HEIGHT);
 		// Kill player on collision with red tile(test for barbed wire)
 		_collisionMap.setTileProperties(2,FlxObject.ANY,function(o1:FlxObject,o2:FlxObject){resetPlayerViewMode();});
+		_collisionMap.setTileProperties(3, FlxObject.ANY, function(o1:FlxObject, o2:FlxObject){
+			loadNextLevel();
+		});
+		_collisionMap.setTileProperties(4, FlxObject.ANY, function(o1:FlxObject, o2:FlxObject){
+			loadNextLevel();
+		});
 		_availableInstructionList = _levels[_currentLevelIndex]._availInstr;
 	}
 
@@ -438,6 +513,16 @@ class PlayState extends FlxState
 		add(_bulletGroup);
 	}
 
+	public function resetBoxes():Void
+	{
+		var boxItr = _boxGroup.iterator();
+		for (box in boxItr)
+		{
+			box.resetToInitPos();
+		}
+		_player._holdingBox = false;
+	}
+
 	private function restartTurretGroup():Void
 	{
 		// To ensure bullets will always be in the same place every single run.
@@ -445,6 +530,15 @@ class PlayState extends FlxState
 		for (turret in turretItr)
 		{
 			turret.restartCooldown();
+		}
+	}
+
+	private function restartLevers():Void
+	{
+		var turretItr = _leverGroup.iterator();
+		for (lever in turretItr)
+		{
+			lever.setOn(true);
 		}
 	}
 
@@ -456,13 +550,11 @@ class PlayState extends FlxState
 		_player.facing = FlxObject.RIGHT;
 		_inViewMode = true;
 		_player.clearInstructions();
-		FlxG.camera.focusOn(_player.getPosition());
+		FlxG.camera.snapToTarget();
 		FlxG.camera.follow(_mouseWrapper, TOPDOWN, 0.1);
 		FlxG.camera.deadzone = new FlxRect(100,100,1080,520);
 		setOrdersState();
 	}
-
-	
 
 	private function resetPlayerPlayMode()
 	{
@@ -476,6 +568,11 @@ class PlayState extends FlxState
 		FlxG.camera.follow(_player, PLATFORMER, 1);
 		resetBulletGroup();
 		restartTurretGroup();
+		restartLevers();
+		resetBoxes();
+		// Ensure player is drawn on top of other sprites
+		remove(_player);
+		insert(100, _player);
 		_inViewMode = false;
 	}
 }
