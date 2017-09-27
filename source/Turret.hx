@@ -23,7 +23,7 @@ class Turret extends FlxSprite
 
         setPosition(posX, posY);
         restartCooldown();
-        _sndShot = FlxG.sound.load(AssetPaths.GunshotDraft2__wav);
+        _sndShot = FlxG.sound.load(AssetPaths.Gunshot3__wav);
     }
 
     override public function update(elapsed:Float)
