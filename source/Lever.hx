@@ -40,10 +40,16 @@ class Lever extends FlxSprite
         if (_isOn)
         {
             _sndSwitchOn.play();
+            loadGraphic("assets/images/switch-1.png");
+            setGraphicSize(64, 64);
+            updateHitbox();
         }
         else
         {
             _sndSwitchOff.play();
+            loadGraphic("assets/images/switch-2.png");
+            setGraphicSize(64, 64);
+            updateHitbox();
         }
     }
 }

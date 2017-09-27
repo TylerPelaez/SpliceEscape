@@ -19,7 +19,7 @@ class PlayState extends FlxState
 	private static var TILE_WIDTH:Int = 128;
 	private static var TILE_HEIGHT:Int = 128;
 	private static var TILEMAP_PATH:String = "assets/images/tilemap_v1.png";
-	private static var FIRST_LEVEL_NAME:String = "lvl_1";
+	private static var FIRST_LEVEL_NAME:String = "lvl_2";
 	// Constants for orders button roll
 	private static var ROLL_X:Int = 150;
 	private static var ROLL_Y:Int = 150;
@@ -79,8 +79,7 @@ class PlayState extends FlxState
 		
 		_player = new Player();
 		_collisionMap = new FlxTilemap();
-		_background = new FlxBackdrop("assets/images/cell.png");
-		_background.setGraphicSize(7680, 4320);
+		_background = new FlxBackdrop("assets/images/walls.png", 1, 1, true, true);
 		add(_background);
 		_levels = new Array<LevelData>();
 		_selectedInstructionList = new List<Instruction>();
