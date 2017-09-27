@@ -145,11 +145,12 @@ class PlayState extends FlxState
 			add(_orders[0]);
 		}
 
+		
+		add(_collisionMap);
 		add(_removeOrder);
 		add(_rollLeft);
 		add(_rollRight);
 		add(_orderDisplay);
-		add(_collisionMap);
 		add(_player);
 		add(_bulletGroup);
 		add(_leverGroup);
