@@ -70,6 +70,7 @@ class PlayState extends FlxState
 	private var _orderBase:Int;
 
 	private var _sndClick:FlxSound;
+	private var _sndClick2:FlxSound;
 
 
 
@@ -105,6 +106,7 @@ class PlayState extends FlxState
 		//_orderDisplay.exists = false;
 
 		_sndClick = FlxG.sound.load(AssetPaths.MenuClick__wav);
+		_sndClick2 = FlxG.sound.load(AssetPaths.MenuClick2__wav);
 
 		_orders = new Array<FlxButton>();
 
@@ -148,7 +150,7 @@ class PlayState extends FlxState
 		//Generate ROLL_COUNT buttons, set them to be scaled and formatted appropriately.
 		for(i in 0...ROLL_COUNT)
 		{
-			_orders.insert(0,new FlxButton(ROLL_X +(ROLL_COUNT - i)*ROLL_SPACING,ROLL_Y,"",function(){_sndClick.play();}));
+			_orders.insert(0,new FlxButton(ROLL_X +(ROLL_COUNT - i)*ROLL_SPACING,ROLL_Y,""));
 			_orders[0].scale.x = _orders[0].scale.y = ROLL_SCALE;
 			_orders[0].label.size = ROLL_PIXELS;
 			_orders[0].label.setFormat(BUTTON_FONT, ROLL_PIXELS, 0x000000);
@@ -338,6 +340,7 @@ class PlayState extends FlxState
 					_availableInstructionList.remove(_availableInstructionList[i+_orderBase]);
 					//Set the orders buttons again
 					setOrdersState();
+					 _sndClick2.play();
 				}
 			}
 			else
