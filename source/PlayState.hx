@@ -291,18 +291,12 @@ class PlayState extends FlxState
 					var boxItr = _boxGroup.iterator();
 					for (box in boxItr)
 					{
-<<<<<<< HEAD
 						if (box._beingHeld)
 						{
 							// Random constants to make the box be following the player
 							var newX = (_player.facing == FlxObject.LEFT) ? (_player.getPosition().x - 50) : (_player.getPosition().x + 75);
-							box.setPosition(newX, _player.getPosition().y + 20);
+							box.setPosition(newX, _player.getPosition().y - 20);
 						}
-=======
-						// Random constants to make the box be following the player
-						var newX = (_player.facing == FlxObject.LEFT) ? (_player.getPosition().x - 50) : (_player.getPosition().x + 75);
-						box.setPosition(newX, _player.getPosition().y - 10);
->>>>>>> 7d3a24755fd2462f152311dd50c58debcb444322
 					}
 				}
 			}
@@ -478,8 +472,6 @@ class PlayState extends FlxState
 			var nextLevel:String = lines[5];
 
 			fullPath = "assets/data/" + curLevelName + "_items.txt";
-
-
 
 			if (Assets.exists(fullPath))
 				lines = Assets.getText(fullPath).split("|");
