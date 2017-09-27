@@ -47,7 +47,7 @@ class Box extends FlxSprite
         _beingHeld = true;
         acceleration.y = 0;
         loadGraphic("assets/images/box-2.png");
-        setGraphicSize(64, 64);
+        setGraphicSize(128, 128);
         updateHitbox();
         
         _sndPickup.play();
@@ -58,7 +58,7 @@ class Box extends FlxSprite
         _beingHeld = false;
         acceleration.y = 750;
         loadGraphic("assets/images/box-1.png");
-        setGraphicSize(64, 64);
+        setGraphicSize(128, 128);
         updateHitbox();
     }
 }

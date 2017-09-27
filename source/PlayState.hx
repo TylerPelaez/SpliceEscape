@@ -17,7 +17,7 @@ class PlayState extends FlxState
 	private static var TILE_WIDTH:Int = 128;
 	private static var TILE_HEIGHT:Int = 128;
 	private static var TILEMAP_PATH:String = "assets/images/tilemap_v1.png";
-	private static var FIRST_LEVEL_NAME:String = "lvl_2";
+	private static var FIRST_LEVEL_NAME:String = "lvl_3";
 	// Constants for orders button roll
 	private static var ROLL_X:Int = 150;
 	private static var ROLL_Y:Int = 150;
@@ -253,7 +253,7 @@ class PlayState extends FlxState
 					{
 						// Random constants to make the box be following the player
 						var newX = (_player.facing == FlxObject.LEFT) ? (_player.getPosition().x - 50) : (_player.getPosition().x + 75);
-						box.setPosition(newX, _player.getPosition().y + 20);
+						box.setPosition(newX, _player.getPosition().y - 10);
 					}
 				}
 			}
