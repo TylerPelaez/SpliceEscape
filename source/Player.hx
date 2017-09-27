@@ -21,6 +21,7 @@ class Player extends FlxSprite {
     private var _speed:Float;
     private var _isActive:Bool;
     public var _interacting:Bool;
+    public var _holdingBox:Bool;
 
     // Sounds
     private var _sndEngine:FlxSound;
@@ -35,6 +36,7 @@ class Player extends FlxSprite {
         setFacingFlip(FlxObject.LEFT, true, false);
 		setFacingFlip(FlxObject.RIGHT, false, false);
         _interacting = false;
+        _holdingBox = false;
 
         acceleration.y = 750; // Gravity is positive because Y increases downwards.
 
@@ -63,8 +65,9 @@ class Player extends FlxSprite {
     private function updateInstruction(elapsed:Float):Void {
         _instructionTimer -= elapsed;
         //Checking if absolute y vel > 20 ensures that if we're airborne we can't get new instructions(zero air maneuverabiltiy)
-        if ( _instructionTimer > 0.0 || (velocity.y > 20 || velocity.y < -20))
+        if ( _instructionTimer > 0.0 || (Math.abs(velocity.y) > 20) )
             return;
+
 
         if (!_instructionList.isEmpty())
         {
@@ -78,7 +81,7 @@ class Player extends FlxSprite {
             if(_currentInstruction._assignVelocityY < 0.0)
             {
                 _sndJump.play();
-            } else if (_currentInstruction._interact = true)
+            } else if (_currentInstruction._interact == true)
             {
                 _interacting = true;
             }
