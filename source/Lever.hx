@@ -32,6 +32,18 @@ class Lever extends FlxSprite
     public function setOn(newOn:Bool):Void
     {
         _isOn = newOn;
+        if(_isOn)
+        {
+            loadGraphic("assets/images/switch-1.png");
+            setGraphicSize(64, 64);
+            updateHitbox();
+        }
+        else
+        {
+            loadGraphic("assets/images/switch-2.png");
+            setGraphicSize(64, 64);
+            updateHitbox();
+        }
     }
 
     public function flipLever():Void{
