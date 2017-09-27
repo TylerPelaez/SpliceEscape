@@ -37,6 +37,8 @@ class Player extends FlxSprite {
     private var _sndEngine:FlxSound;
     private var _sndJump:FlxSound;
 
+    private var _isDead:Bool;
+
     public function new() {
         super();
         loadGraphic("assets/images/packedSpriteSheet.png", true, 128, 128);
@@ -75,6 +77,8 @@ class Player extends FlxSprite {
         // Collect how much time has elapsed since last frame.
 		_musicTimer += FlxG.elapsed;
 
+        
+
         if (_isActive)
         {
             updateInstruction(elapsed);
@@ -95,7 +99,7 @@ class Player extends FlxSprite {
             }
 
         }
-        else
+        else if (!_isDead)
         {
             _sndEngine.pause();
             if (_musicTimer >= 7.22 && _musicOn == false)
@@ -121,7 +125,7 @@ class Player extends FlxSprite {
         _instructionTimer -= elapsed;
         //Checking if absolute y vel > 20 ensures that if we're airborne we can't get new instructions(zero air maneuverabiltiy)
         if ( _instructionTimer > 0.0 || (Math.abs(velocity.y) > 10) || (!animation.finished && (
-         animation.curAnim.name == "FlipSwitchRight"  || animation.curAnim.name == "FlipSwitchLeft")))
+         animation.curAnim.name == "FlipSwitchRight"  || animation.curAnim.name == "FlipSwitchLeft")) || _isDead)
             return;
 
 
@@ -179,6 +183,16 @@ class Player extends FlxSprite {
     public function isFinished():Bool
     {
         return _instructionList.isEmpty() && (_instructionTimer < 0.0);
+    }
+
+    public function setSpeed(newSpeed:Float)
+    {
+        _speed = newSpeed;
+    }
+
+    public function setDead(newDead:Bool):Void
+    {
+        _isDead = newDead;
     }
 
     public function giveInstructions(newInstructions:List<Instruction>):Void
