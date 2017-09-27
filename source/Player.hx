@@ -32,7 +32,9 @@ class Player extends FlxSprite {
 
     public function new() {
         super();
-        loadGraphic("assets/images/duck.png", true, 100, 114);
+        loadGraphic("assets/images/Robo_Char_design.png");
+        setGraphicSize(128, 128);
+        updateHitbox();
         _instructionTimer = 0.0;
         _instructionList = new List<Instruction>();
 
