@@ -291,12 +291,18 @@ class PlayState extends FlxState
 					var boxItr = _boxGroup.iterator();
 					for (box in boxItr)
 					{
+<<<<<<< HEAD
 						if (box._beingHeld)
 						{
 							// Random constants to make the box be following the player
 							var newX = (_player.facing == FlxObject.LEFT) ? (_player.getPosition().x - 50) : (_player.getPosition().x + 75);
 							box.setPosition(newX, _player.getPosition().y - 20);
 						}
+=======
+						// Random constants to make the box be following the player
+						var newX = (_player.facing == FlxObject.LEFT) ? (_player.getPosition().x - 50) : (_player.getPosition().x + 75);
+						box.setPosition(newX, _player.getPosition().y - 10);
+>>>>>>> 9183379deea93ad78d345d2caf5950e0b8311eb5
 					}
 				}
 			}
