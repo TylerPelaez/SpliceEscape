@@ -63,8 +63,8 @@ class Turret extends FlxSprite
         }
         var returnBullet = new FlxSprite();
         returnBullet.loadGraphic("assets/images/bullet.png");
-        returnBullet.setPosition(facing == FlxObject.LEFT ? getPosition().x + 5 : getPosition().x + 50, getPosition().y + 6 );
-        returnBullet.velocity.x = facing == FlxObject.LEFT ? -100 : 100;
+        returnBullet.setPosition(facing == FlxObject.LEFT ? getPosition().x - 5 : getPosition().x + 20, getPosition().y + 30 );
+        returnBullet.velocity.x = facing == FlxObject.LEFT ? -200 : 200;
         _cooldownTimer = _fireRate;
 
         _sndShot.play();
