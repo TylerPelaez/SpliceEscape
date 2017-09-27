@@ -156,6 +156,7 @@ class PlayState extends FlxState
 		FlxG.camera.follow(_player, PLATFORMER, 1);
 
 		loadlevelsFromFile(FIRST_LEVEL_NAME);
+
 		loadNextLevel();
 		
 		// Reset player
@@ -416,6 +417,8 @@ class PlayState extends FlxState
 		_collisionMap.loadMapFromCSV(CSVPath, TILEMAP_PATH, TILE_WIDTH, TILE_HEIGHT);
 		// Kill player on collision with red tile(test for barbed wire)
 		_collisionMap.setTileProperties(2,FlxObject.ANY,function(o1:FlxObject,o2:FlxObject){resetPlayerViewMode();});
+		// Probably should only collide with the player
+		_collisionMap.setTileProperties(3,FlxObject.ANY,function(o1:FlxObject,o2:FlxObject){loadNextLevel();});
 		_availableInstructionList = _levels[_currentLevelIndex]._availInstr;
 	}
 
