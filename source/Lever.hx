@@ -11,12 +11,12 @@ class Lever extends FlxSprite
     private var _sndSwitchOn:FlxSound;
     private var _sndSwitchOff:FlxSound;
 
-    public function new(posX:Int, posY:Int, turretX:Int, turretY:Int, turretFireRate:Float) 
+    public function new(posX:Int, posY:Int, turretX:Int, turretY:Int, turretFireRate:Float, direction:String) 
     {
         super();
         _isOn = true;
         setPosition(posX, posY);
-        _connectedTurret = new Turret(turretX, turretY, turretFireRate);
+        _connectedTurret = new Turret(turretX, turretY, turretFireRate, direction);
         loadGraphic("assets/images/switch.png");
         setGraphicSize(64, 64);
         updateHitbox();

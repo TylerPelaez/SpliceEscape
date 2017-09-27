@@ -145,11 +145,12 @@ class PlayState extends FlxState
 			add(_orders[0]);
 		}
 
+		
+		add(_collisionMap);
 		add(_removeOrder);
 		add(_rollLeft);
 		add(_rollRight);
 		add(_orderDisplay);
-		add(_collisionMap);
 		add(_player);
 		add(_bulletGroup);
 		add(_leverGroup);
@@ -396,7 +397,7 @@ class PlayState extends FlxState
 				var itemInfo = item.split(" ");
 				if (itemInfo[0] == "lever")
 				{
-					var newLever = new Lever(Std.parseInt(itemInfo[1]), Std.parseInt(itemInfo[2]), Std.parseInt(itemInfo[3]), Std.parseInt(itemInfo[4]), Std.parseFloat(itemInfo[5]));
+					var newLever = new Lever(Std.parseInt(itemInfo[1]), Std.parseInt(itemInfo[2]), Std.parseInt(itemInfo[3]), Std.parseInt(itemInfo[4]), Std.parseFloat(itemInfo[5]), itemInfo[6]);
 					levelData._levers.push(newLever);
 				} else if (itemInfo[0] == "box")
 				{
