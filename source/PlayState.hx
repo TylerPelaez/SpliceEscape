@@ -310,8 +310,8 @@ class PlayState extends FlxState
 						if (box._beingHeld)
 						{
 							// Random constants to make the box be following the player
-							var newX = (_player.facing == FlxObject.LEFT) ? (_player.getPosition().x - 50) : (_player.getPosition().x + 100);
-							box.setPosition(newX, _player.getPosition().y + 20);
+							var newX = (_player.facing == FlxObject.LEFT) ? (_player.getPosition().x - 50) : (_player.getPosition().x + 75);
+							box.setPosition(newX, _player.getPosition().y + 15);
 						}
 					}
 				}
