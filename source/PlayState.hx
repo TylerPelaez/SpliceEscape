@@ -652,7 +652,7 @@ class PlayState extends FlxState
 		_player.setActive(false);
 		_player.alpha = 0.4;
 		_player.facing = FlxObject.RIGHT;
-		_player.animation.frameIndex = 2;
+		_player.animation.frameIndex = 3;
 		_player.animation.stop();
 		_playerDead = false;
 		_playerDeathCountdown = 0.0;
