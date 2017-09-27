@@ -36,6 +36,7 @@ class Player extends FlxSprite {
     // Sounds
     private var _sndEngine:FlxSound;
     private var _sndJump:FlxSound;
+    private var _sndDeath:FlxSound;
 
     private var _isDead:Bool;
 
@@ -66,6 +67,7 @@ class Player extends FlxSprite {
 
         _sndEngine = FlxG.sound.load(AssetPaths.RobotEngine__wav);
         _sndJump = FlxG.sound.load(AssetPaths.JumpA__wav);
+        _sndDeath = FlxG.sound.load(AssetPaths.Death__wav);
 
         #if !flash
         FlxG.sound.playMusic(AssetPaths.IntroLoop3__ogg, 1, true);
@@ -194,6 +196,10 @@ class Player extends FlxSprite {
     public function setDead(newDead:Bool):Void
     {
         _isDead = newDead;
+        if ( _isDead == true)
+        {
+            _sndDeath.play();
+        }
     }
 
     public function giveInstructions(newInstructions:List<Instruction>):Void
