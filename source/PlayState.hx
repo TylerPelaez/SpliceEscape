@@ -196,6 +196,8 @@ class PlayState extends FlxState
 						box.drop();
 						_player._holdingBox = false;
 					}
+					remove(_boxGroup);
+					add(_boxGroup);
 				} else 
 				{
 					var leverItr = _leverGroup.iterator();
@@ -210,18 +212,22 @@ class PlayState extends FlxState
 						}
 					}
 
-					var boxItr = _boxGroup.iterator();
-					for (box in boxItr)
+					if (!flippedLever)
 					{
-						if (FlxG.overlap(box, _player))
+						var boxItr = _boxGroup.iterator();
+						for (box in boxItr)
 						{
-							box.pickUp();
-							_boxGroup.remove(box);
-							_boxGroup.insert(100, box);
-							_player._holdingBox = true;
-							break;
+							if (FlxG.overlap(box, _player))
+							{
+								box.pickUp();
+								remove(_boxGroup);
+								insert(105, _boxGroup);
+								_player._holdingBox = true;
+								break;
+							}
 						}
-					}
+					}	
+					
 				}
 				_player._interacting = false;
 			}

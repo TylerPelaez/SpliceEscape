@@ -15,10 +15,9 @@ class Turret extends FlxSprite
     public function new(posX:Int, posY:Int, fireRate:Float)
     {
         super();
-        _isActive = true;
         _fireRate = fireRate;
-        _cooldownTimer = 0.0;
         setPosition(posX, posY);
+        restartCooldown();
         _sndShot = FlxG.sound.load(AssetPaths.GunshotDraft2__wav);
     }
 
