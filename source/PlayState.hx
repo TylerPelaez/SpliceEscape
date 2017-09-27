@@ -98,7 +98,7 @@ class PlayState extends FlxState
 
 		_orderBase = 0;
 		
-		_rollRight = new FlxButton(0,ROLL_Y,"→",function(){_orderBase++;setOrdersState();});
+		_rollRight = new FlxButton(0,ROLL_Y,"→",function(){_orderBase++;setOrdersState(); });
 		_rollRight.scale.y = ROLL_SCALE;
 		_rollRight.label.size = ROLL_PIXELS;
 		_rollRight.label.systemFont = "Arial";
@@ -107,7 +107,7 @@ class PlayState extends FlxState
 		_rollRight.label.alignment = "center";
 		//_rollRight.exists = false;
 
-		_rollLeft = new FlxButton(0,ROLL_Y,"←",function(){_orderBase--;setOrdersState();});
+		_rollLeft = new FlxButton(0,ROLL_Y,"←",function(){_orderBase--;setOrdersState(); });
 		_rollLeft.scale.y = ROLL_SCALE;
 		_rollLeft.label.size = ROLL_PIXELS;
 		_rollLeft.label.systemFont = "Arial";
@@ -385,7 +385,11 @@ class PlayState extends FlxState
 			levelData._playerInitX = Std.parseInt(lines[3]);
 			levelData._playerInitY = Std.parseInt(lines[4]);
 
+			var nextLevel:String = lines[5];
+
 			fullPath = "assets/data/" + curLevelName + "_items.txt";
+
+
 
 			if (Assets.exists(fullPath))
 				lines = Assets.getText(fullPath).split("|");
@@ -432,7 +436,7 @@ class PlayState extends FlxState
 				levelData._availInstr.push(tempList);
 			}
 
-			curLevelName = lines[5];
+			curLevelName = nextLevel;
 			_levels.push(levelData);
 		} while(curLevelName != "end");
 	}
