@@ -10,7 +10,7 @@ import flixel.FlxObject;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.math.FlxRect;
-import flixel.addons.display.FlxBackdrop;
+//import flixel.addons.display.FlxBackdrop;
 import flixel.system.FlxSound;
 
 class PlayState extends FlxState
@@ -19,7 +19,7 @@ class PlayState extends FlxState
 	private static var TILE_WIDTH:Int = 128;
 	private static var TILE_HEIGHT:Int = 128;
 	private static var TILEMAP_PATH:String = "assets/images/tilemap_v1.png";
-	private static var FIRST_LEVEL_NAME:String = "lvl_5";
+	private static var FIRST_LEVEL_NAME:String = "lvl_1";
 	// Constants for orders button roll
 	private static var ROLL_X:Int = 150;
 	private static var ROLL_Y:Int = 150;
@@ -41,7 +41,7 @@ class PlayState extends FlxState
 	private var INTERACT_INSTRUCTION:Instruction;
 
 	private var _player:Player;
-	private var _background:FlxBackdrop;
+	//private var _background:FlxBackdrop;
 	private var _collisionMap:FlxTilemap;
 	private var _inViewMode:Bool;
 
@@ -84,8 +84,8 @@ class PlayState extends FlxState
 		
 		_player = new Player();
 		_collisionMap = new FlxTilemap();
-		_background = new FlxBackdrop("assets/images/walls.png", 1, 1, true, true);
-		add(_background);
+		//_background = new FlxBackdrop("assets/images/walls.png", 1, 1, true, true);
+		//add(_background);
 		_levels = new Array<LevelData>();
 		_selectedInstructionList = new List<Instruction>();
 		initInstructions();
@@ -291,18 +291,9 @@ class PlayState extends FlxState
 					var boxItr = _boxGroup.iterator();
 					for (box in boxItr)
 					{
-<<<<<<< HEAD
-						if (box._beingHeld)
-						{
-							// Random constants to make the box be following the player
-							var newX = (_player.facing == FlxObject.LEFT) ? (_player.getPosition().x - 50) : (_player.getPosition().x + 75);
-							box.setPosition(newX, _player.getPosition().y - 20);
-						}
-=======
 						// Random constants to make the box be following the player
 						var newX = (_player.facing == FlxObject.LEFT) ? (_player.getPosition().x - 50) : (_player.getPosition().x + 75);
 						box.setPosition(newX, _player.getPosition().y - 10);
->>>>>>> 9183379deea93ad78d345d2caf5950e0b8311eb5
 					}
 				}
 			}
