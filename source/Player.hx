@@ -49,7 +49,9 @@ class Player extends FlxSprite {
         _sndEngine = FlxG.sound.load(AssetPaths.RobotEngine__wav);
         _sndJump = FlxG.sound.load(AssetPaths.JumpA__wav);
 
+        #if !flash
         FlxG.sound.playMusic(AssetPaths.IntroLoop3__ogg, 1, true);
+        #end
     }
 
     override public function update(elapsed:Float):Void {
@@ -69,7 +71,9 @@ class Player extends FlxSprite {
             // However, since HaxeFlixel is terrible, I'll have to settle for like 7.15?
             if (_musicTimer >= 7.22 && _musicOn == false)
             {
+                #if !flash
                 FlxG.sound.playMusic(AssetPaths.MainLoop__ogg, 1, true);
+                #end
                 _musicTimer = 0.0;
                 _musicOn = true;
             }
@@ -80,7 +84,9 @@ class Player extends FlxSprite {
             _sndEngine.pause();
             if (_musicTimer >= 7.22 && _musicOn == false)
             {
+                #if !flash
                 FlxG.sound.playMusic(AssetPaths.IntroLoop3__ogg,1,true);
+                #end
                 _musicTimer = 0.0;
             }
         }
