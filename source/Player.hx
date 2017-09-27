@@ -21,6 +21,9 @@ class Player extends FlxSprite {
     private var _speed:Float;
     private var _isActive:Bool;
 
+    private var _musicTimer:Float;
+    private var _musicOn:Bool;
+
     // Sounds
     private var _sndEngine:FlxSound;
     private var _sndJump:FlxSound;
@@ -36,21 +39,48 @@ class Player extends FlxSprite {
 
         acceleration.y = 750; // Gravity is positive because Y increases downwards.
 
+        _musicTimer = 0.0;
+        _musicOn = false;
+
         _sndEngine = FlxG.sound.load(AssetPaths.RobotEngine__wav);
         _sndJump = FlxG.sound.load(AssetPaths.JumpA__wav);
+
+        FlxG.sound.playMusic(AssetPaths.IntroLoop3__ogg, 1, true);
     }
 
     override public function update(elapsed:Float):Void {
-		
+
+        // Collect how much time has elapsed since last frame.
+		_musicTimer += FlxG.elapsed;
+        // Only need the remainder to compare to closest beat
+        _musicTimer = _musicTimer % 7.15;
+
         if (_isActive)
         {
             updateInstruction(elapsed);
 		    movement();
 
             _sndEngine.play();
+
+            // Check out whether or not the music is at a point at which it can transition into the main theme.
+            // The intro loop is 14.521 seconds long, so it can transition at 7.2615 or 14.521 or 0.
+            // However, since HaxeFlixel is terrible, I'll have to settle for like 7.15?
+            if ( (_musicTimer < 0.09 || _musicTimer > 7.141 ) && _musicOn == false)
+            {
+                FlxG.sound.playMusic(AssetPaths.MainLoop__ogg, 1, true);
+                _musicOn = true;
+            }
+
         }
         else
+        {
             _sndEngine.pause();
+            if ( (_musicTimer < 0.09 || _musicTimer >= 7.15 ) && _musicOn == false)
+            {
+                FlxG.sound.playMusic(AssetPaths.IntroLoop3__ogg,1,true);
+            }
+        }
+
         super.update(elapsed);
     }
 
