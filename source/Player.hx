@@ -72,6 +72,7 @@ class Player extends FlxSprite {
         #if !flash
         FlxG.sound.playMusic(AssetPaths.IntroLoop3__ogg, 1, true);
         #end
+        width = 96;
     }
 
     override public function update(elapsed:Float):Void {
