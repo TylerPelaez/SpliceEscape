@@ -74,7 +74,7 @@ class PlayState extends FlxState
 
 	private var _playerDead:Bool;
 	private var _playerDeathCountdown:Float;
-	private static var _playerDeadTimer:Float = 1.2;
+	private static var _playerDeadTimer:Float = 1.4;
 
 
 
@@ -655,7 +655,7 @@ class PlayState extends FlxState
 		_player.setActive(false);
 		_player.alpha = 0.4;
 		_player.facing = FlxObject.RIGHT;
-		_player.animation.frameIndex = 3;
+		_player.animation.frameIndex = 1;
 		_player.animation.stop();
 		_playerDead = false;
 		_playerDeathCountdown = 0.0;
