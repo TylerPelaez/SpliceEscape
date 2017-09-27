@@ -10,6 +10,7 @@ import flixel.FlxObject;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.math.FlxRect;
+import flixel.addons.display.FlxBackdrop;
 
 class PlayState extends FlxState
 {
@@ -38,6 +39,7 @@ class PlayState extends FlxState
 	private var INTERACT_INSTRUCTION:Instruction;
 
 	private var _player:Player;
+	private var _background:FlxBackdrop;
 	private var _collisionMap:FlxTilemap;
 	private var _inViewMode:Bool;
 
@@ -66,12 +68,16 @@ class PlayState extends FlxState
 	private var _orderBase:Int;
 
 
+
 	override public function create():Void
 	{
 		super.create();
 		
 		_player = new Player();
 		_collisionMap = new FlxTilemap();
+		_background = new FlxBackdrop("assets/images/cell.png");
+		_background.setGraphicSize(7680, 4320);
+		add(_background);
 		_levels = new Array<LevelData>();
 		_selectedInstructionList = new List<Instruction>();
 		initInstructions();
@@ -446,6 +452,9 @@ class PlayState extends FlxState
 		// Paranoid group resetting due to a lack of understanding of how groups work.
 		resetBulletGroup();
 
+		_selectedInstructionList.clear();
+		_subInstructionList.clear();
+
 		remove(_leverGroup);
 		_leverGroup.kill();
 		_leverGroup = new FlxTypedGroup<Lever>();
@@ -492,9 +501,11 @@ class PlayState extends FlxState
 		_collisionMap.setTileProperties(2,FlxObject.ANY,function(o1:FlxObject,o2:FlxObject){resetPlayerViewMode();});
 		_collisionMap.setTileProperties(3, FlxObject.ANY, function(o1:FlxObject, o2:FlxObject){
 			loadNextLevel();
+			resetPlayerViewMode();
 		});
 		_collisionMap.setTileProperties(4, FlxObject.ANY, function(o1:FlxObject, o2:FlxObject){
 			loadNextLevel();
+			resetPlayerViewMode();
 		});
 		_availableInstructionList = _levels[_currentLevelIndex]._availInstr;
 	}
