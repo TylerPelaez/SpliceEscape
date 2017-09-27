@@ -15,13 +15,20 @@ import flixel.system.FlxSound;
 
 class Player extends FlxSprite {
 
+    private static var ANIMATION_FRAMERATE:Int = 6;
+
+
     private var _instructionTimer:Float;
     private var _instructionList:List<Instruction>;
     private var _currentInstruction:Instruction;
     private var _speed:Float;
     private var _isActive:Bool;
+
+
     public var _interacting:Bool;
     public var _holdingBox:Bool;
+
+
 
     private var _musicTimer:Float;
     private var _musicOn:Bool;
@@ -29,17 +36,27 @@ class Player extends FlxSprite {
     // Sounds
     private var _sndEngine:FlxSound;
     private var _sndJump:FlxSound;
+    private var _sndDeath:FlxSound;
+
+    private var _isDead:Bool;
 
     public function new() {
         super();
-        loadGraphic("assets/images/Robo_Char_design.png");
-        setGraphicSize(128, 128);
-        updateHitbox();
+        loadGraphic("assets/images/packedSpriteSheet.png", true, 128, 128);
+        animation.add("WalkRight", [32, 33], ANIMATION_FRAMERATE, true, false, false);
+        animation.add("WalkLeft", [32, 33], ANIMATION_FRAMERATE, true, true, false);
+        animation.add("Idle", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], ANIMATION_FRAMERATE, true, false, false);
+        animation.add("JumpRight", [12, 13, 14, 15, 16, 17, 18, 19], ANIMATION_FRAMERATE, false, false, false );
+        animation.add("JumpLeft", [12, 13, 14, 15, 16, 17, 18, 19], ANIMATION_FRAMERATE, false, true, false );
+        animation.add("FlipSwitchRight", [22, 23, 26, 27, 30], ANIMATION_FRAMERATE, false, false, false);
+        animation.add("FlipSwitchLeft", [22, 23, 26, 27, 30], ANIMATION_FRAMERATE, false, true, false);
+        animation.add("DeathRight", [20, 21, 24, 25, 28, 29], ANIMATION_FRAMERATE, false, false, false);
+        animation.add("DeathLeft", [20, 21, 24, 25, 28, 29], ANIMATION_FRAMERATE, false, true, false);
+
+
         _instructionTimer = 0.0;
         _instructionList = new List<Instruction>();
 
-        setFacingFlip(FlxObject.LEFT, true, false);
-		setFacingFlip(FlxObject.RIGHT, false, false);
         _interacting = false;
         _holdingBox = false;
 
@@ -50,16 +67,20 @@ class Player extends FlxSprite {
 
         _sndEngine = FlxG.sound.load(AssetPaths.RobotEngine__wav);
         _sndJump = FlxG.sound.load(AssetPaths.JumpA__wav);
+        _sndDeath = FlxG.sound.load(AssetPaths.Death__wav);
 
         #if !flash
         FlxG.sound.playMusic(AssetPaths.IntroLoop3__ogg, 1, true);
         #end
+        width = 96;
     }
 
     override public function update(elapsed:Float):Void {
 
         // Collect how much time has elapsed since last frame.
 		_musicTimer += FlxG.elapsed;
+
+        
 
         if (_isActive)
         {
@@ -81,7 +102,7 @@ class Player extends FlxSprite {
             }
 
         }
-        else
+        else if (!_isDead)
         {
             _sndEngine.pause();
             if (_musicTimer >= 7.22 && _musicOn == false)
@@ -106,7 +127,8 @@ class Player extends FlxSprite {
     private function updateInstruction(elapsed:Float):Void {
         _instructionTimer -= elapsed;
         //Checking if absolute y vel > 20 ensures that if we're airborne we can't get new instructions(zero air maneuverabiltiy)
-        if ( _instructionTimer > 0.0 || (Math.abs(velocity.y) > 20) )
+        if ( _instructionTimer > 0.0 || (Math.abs(velocity.y) > 10) || (!animation.finished && (
+         animation.curAnim.name == "FlipSwitchRight"  || animation.curAnim.name == "FlipSwitchLeft")) || _isDead)
             return;
 
 
@@ -122,14 +144,38 @@ class Player extends FlxSprite {
             if(_currentInstruction._assignVelocityY < 0.0)
             {
                 _sndJump.play();
+                if (facing == FlxObject.LEFT)
+                {
+                    animation.play("JumpLeft");
+                } else
+                {
+                    animation.play("JumpRight");
+                }
             } else if (_currentInstruction._interact == true)
             {
                 _interacting = true;
+            } else
+            {
+                if (_currentInstruction._name != "0")
+                {
+                     if (facing == FlxObject.LEFT)
+                    {
+                        animation.play("WalkLeft");
+                    } else
+                    {
+                        animation.play("WalkRight");
+                    }
+                } else
+                {
+                    animation.play("Idle");
+                }
+               
             }
         } else
         {
             _speed = 0;
             velocity.set(0, velocity.y);
+            animation.stop();
         }
     }
 
@@ -140,6 +186,20 @@ class Player extends FlxSprite {
     public function isFinished():Bool
     {
         return _instructionList.isEmpty() && (_instructionTimer < 0.0);
+    }
+
+    public function setSpeed(newSpeed:Float)
+    {
+        _speed = newSpeed;
+    }
+
+    public function setDead(newDead:Bool):Void
+    {
+        _isDead = newDead;
+        if ( _isDead == true)
+        {
+            _sndDeath.play();
+        }
     }
 
     public function giveInstructions(newInstructions:List<Instruction>):Void

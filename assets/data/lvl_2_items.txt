@@ -1,1 +1,5 @@
+<<<<<<< HEAD
+lever 0 682 1649 682 .75 left
+=======
 lever 0 682 1589 640 .75 left
+>>>>>>> early-levels

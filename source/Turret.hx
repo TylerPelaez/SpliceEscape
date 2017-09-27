@@ -40,7 +40,9 @@ class Turret extends FlxSprite
             restartCooldown();
         } else
         {
-            loadGraphic("assets/images/inactive_turret.png");
+            loadGraphic("assets/images/turret-2.png");
+            setGraphicSize(64, 64);
+            updateHitbox();
         }
     }
 
@@ -48,7 +50,9 @@ class Turret extends FlxSprite
     {
         _isActive = true;
         _cooldownTimer = 0.0;
-        loadGraphic("assets/images/active_turret.png");
+        loadGraphic("assets/images/turret-1.png");
+        setGraphicSize(64, 64);
+        updateHitbox();
     }
 
     public function fire():FlxSprite
