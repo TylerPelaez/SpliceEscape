@@ -291,9 +291,12 @@ class PlayState extends FlxState
 					var boxItr = _boxGroup.iterator();
 					for (box in boxItr)
 					{
-						// Random constants to make the box be following the player
-						var newX = (_player.facing == FlxObject.LEFT) ? (_player.getPosition().x - 50) : (_player.getPosition().x + 75);
-						box.setPosition(newX, _player.getPosition().y - 10);
+						if (box._beingHeld)
+						{
+							// Random constants to make the box be following the player
+							var newX = (_player.facing == FlxObject.LEFT) ? (_player.getPosition().x - 50) : (_player.getPosition().x + 75);
+							box.setPosition(newX, _player.getPosition().y - 20);
+						}
 					}
 				}
 			}
@@ -573,12 +576,11 @@ class PlayState extends FlxState
 		// Kill player on collision with red tile(test for barbed wire)
 		_collisionMap.setTileProperties(2,FlxObject.ANY,function(o1:FlxObject,o2:FlxObject){killPlayer();});
 		_collisionMap.setTileProperties(3, FlxObject.ANY, function(o1:FlxObject, o2:FlxObject){
-			loadNextLevel();
-			resetPlayerViewMode();
-		});
-		_collisionMap.setTileProperties(4, FlxObject.ANY, function(o1:FlxObject, o2:FlxObject){
-			loadNextLevel();
-			resetPlayerViewMode();
+			if (Std.is(o2, Player) || Std.is(o1, Player))
+			{
+				loadNextLevel();
+				resetPlayerViewMode();
+			}
 		});
 		_availableInstructionList = _levels[_currentLevelIndex]._availInstr;
 	}
