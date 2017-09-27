@@ -222,6 +222,13 @@ class PlayState extends FlxState
 						{
 							lever.flipLever();
 							flippedLever = true;
+							if ((lever.getPosition().x + (lever.width / 2)) < (_player.getPosition().x + (_player.width / 2)))
+							{
+								_player.animation.play("FlipSwitchLeft");
+							} else
+							{
+								_player.animation.play("FlipSwitchRight");
+							}
 							break;
 						}
 					}
@@ -606,6 +613,7 @@ class PlayState extends FlxState
 		_player.velocity.x = _player.velocity.y = 0;
 		_player.setPosition(_levels[_currentLevelIndex]._playerInitX, _levels[_currentLevelIndex]._playerInitY);
 		_player.giveInstructions(flattenSubInstruction());
+		_player.animation.stop();
 		unsetOrdersState();
 		FlxG.camera.follow(_player, PLATFORMER, 1);
 		resetBulletGroup();
