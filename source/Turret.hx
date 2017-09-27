@@ -1,6 +1,9 @@
 package;
 
 import flixel.FlxSprite;
+import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.system.FlxSound;
 
 class Turret extends FlxSprite
 {
@@ -8,14 +11,19 @@ class Turret extends FlxSprite
     private var _fireRate:Float;
     private var _cooldownTimer:Float;
     private static var bulletSpeed:Float;
+    private var _sndShot:FlxSound;
 
-    public function new(posX:Int, posY:Int, fireRate:Float)
+    public function new(posX:Int, posY:Int, fireRate:Float, direction:String)
     {
         super();
-        _isActive = true;
         _fireRate = fireRate;
-        _cooldownTimer = 0.0;
+        setFacingFlip(FlxObject.LEFT, false, false);
+        setFacingFlip(FlxObject.RIGHT, true, false);
+         facing = (direction == "left") ? FlxObject.LEFT : FlxObject.RIGHT;
+
         setPosition(posX, posY);
+        restartCooldown();
+        _sndShot = FlxG.sound.load(AssetPaths.GunshotDraft2__wav);
     }
 
     override public function update(elapsed:Float)
@@ -27,11 +35,24 @@ class Turret extends FlxSprite
     public function setActive(newActive:Bool)
     {
         _isActive = newActive;
+        if (_isActive)
+        {
+            restartCooldown();
+        } else
+        {
+            loadGraphic("assets/images/turret-2.png");
+            setGraphicSize(64, 64);
+            updateHitbox();
+        }
     }
 
     public function restartCooldown():Void
     {
+        _isActive = true;
         _cooldownTimer = 0.0;
+        loadGraphic("assets/images/turret-1.png");
+        setGraphicSize(64, 64);
+        updateHitbox();
     }
 
     public function fire():FlxSprite
@@ -41,10 +62,12 @@ class Turret extends FlxSprite
             return null;
         }
         var returnBullet = new FlxSprite();
-        //returnBullet.loadGraphic("assets/images/bullet.png");
-        returnBullet.setPosition(getPosition().x + 30, getPosition().y + 30 );
-        returnBullet.velocity.x = -100;
+        returnBullet.loadGraphic("assets/images/bullet.png");
+        returnBullet.setPosition(facing == FlxObject.LEFT ? getPosition().x - 5 : getPosition().x + 20, getPosition().y + 30 );
+        returnBullet.velocity.x = facing == FlxObject.LEFT ? -200 : 200;
         _cooldownTimer = _fireRate;
+
+        _sndShot.play();
 
         return returnBullet;
     }
