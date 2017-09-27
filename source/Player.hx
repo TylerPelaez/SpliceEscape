@@ -217,6 +217,7 @@ class Player extends FlxSprite {
         _instructionTimer = -1;
         _currentInstruction = null;
         _interacting = false;
+        _holdingBox = false;
     }
 
     public function setActive(active:Bool):Void
