@@ -30,6 +30,10 @@ class Turret extends FlxSprite
     public function setActive(newActive:Bool)
     {
         _isActive = newActive;
+        if (_isActive)
+        {
+            restartCooldown();
+        }
     }
 
     public function restartCooldown():Void

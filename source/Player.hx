@@ -154,6 +154,7 @@ class Player extends FlxSprite {
         _instructionList.clear();
         _instructionTimer = -1;
         _currentInstruction = null;
+        _interacting = false;
     }
 
     public function setActive(active:Bool):Void

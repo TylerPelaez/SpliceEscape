@@ -514,6 +514,7 @@ class PlayState extends FlxState
 		{
 			box.resetToInitPos();
 		}
+		_player._holdingBox = false;
 	}
 
 	private function restartTurretGroup():Void
