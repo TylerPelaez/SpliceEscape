@@ -22,6 +22,11 @@ class Lever extends FlxSprite
         return _isOn;
     }
 
+    public function setOn(newOn:Bool):Void
+    {
+        _isOn = newOn;
+    }
+
     public function flipLever():Void{
         _isOn = !_isOn;
         _connectedTurret.setActive(_isOn);

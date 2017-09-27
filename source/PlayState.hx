@@ -520,6 +520,15 @@ class PlayState extends FlxState
 		}
 	}
 
+	private function restartLevers():Void
+	{
+		var turretItr = _leverGroup.iterator();
+		for (lever in turretItr)
+		{
+			lever.setOn(true);
+		}
+	}
+
 	private function resetPlayerViewMode()
 	{
 		resetPlayerPlayMode();
@@ -546,6 +555,7 @@ class PlayState extends FlxState
 		FlxG.camera.follow(_player, PLATFORMER, 1);
 		resetBulletGroup();
 		restartTurretGroup();
+		restartLevers();
 		resetBoxes();
 		// Ensure player is drawn on top of other sprites
 		remove(_player);
