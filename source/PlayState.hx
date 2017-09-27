@@ -206,6 +206,7 @@ class PlayState extends FlxState
 						{
 							lever.flipLever();
 							flippedLever = true;
+							break;
 						}
 					}
 
@@ -215,7 +216,10 @@ class PlayState extends FlxState
 						if (FlxG.overlap(box, _player))
 						{
 							box.pickUp();
+							_boxGroup.remove(box);
+							_boxGroup.insert(100, box);
 							_player._holdingBox = true;
+							break;
 						}
 					}
 				}
@@ -543,6 +547,9 @@ class PlayState extends FlxState
 		resetBulletGroup();
 		restartTurretGroup();
 		resetBoxes();
+		// Ensure player is drawn on top of other sprites
+		remove(_player);
+		insert(100, _player);
 		_inViewMode = false;
 	}
 }

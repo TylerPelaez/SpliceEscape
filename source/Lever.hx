@@ -13,6 +13,9 @@ class Lever extends FlxSprite
         _isOn = true;
         setPosition(posX, posY);
         _connectedTurret = new Turret(turretX, turretY, turretFireRate);
+        loadGraphic("assets/images/switch.png");
+        setGraphicSize(64, 64);
+        updateHitbox();
     }
 
     public function isOn():Bool{

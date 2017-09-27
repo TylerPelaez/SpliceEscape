@@ -35,6 +35,7 @@ class Turret extends FlxSprite
 
     public function restartCooldown():Void
     {
+        _isActive = true;
         _cooldownTimer = 0.0;
     }
 
@@ -45,8 +46,8 @@ class Turret extends FlxSprite
             return null;
         }
         var returnBullet = new FlxSprite();
-        //returnBullet.loadGraphic("assets/images/bullet.png");
-        returnBullet.setPosition(getPosition().x + 30, getPosition().y + 30 );
+        returnBullet.loadGraphic("assets/images/bullet.png");
+        returnBullet.setPosition(getPosition().x - 5, getPosition().y + 30 );
         returnBullet.velocity.x = -100;
         _cooldownTimer = _fireRate;
 

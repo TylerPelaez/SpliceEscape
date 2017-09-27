@@ -11,6 +11,7 @@ class Box extends FlxSprite
     public function new(posX:Int, posY:Int)
     {
         super();
+        
         _initPosX = posX;
         _initPosY = posY;
         resetToInitPos();
@@ -26,11 +27,17 @@ class Box extends FlxSprite
     {
         _beingHeld = true;
         acceleration.y = 0;
+        loadGraphic("assets/images/box-2.png");
+        setGraphicSize(64, 64);
+        updateHitbox();
     }
 
     public function drop()
     {
         _beingHeld = false;
         acceleration.y = 750;
+        loadGraphic("assets/images/box-1.png");
+        setGraphicSize(64, 64);
+        updateHitbox();
     }
 }
