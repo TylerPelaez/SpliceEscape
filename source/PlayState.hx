@@ -28,7 +28,8 @@ class PlayState extends FlxState
 	private static var ROLL_SPACING:Int = 150;
 	private static var ROLL_PIXELS:Int = 16;
 	private static var ROLL_SELECT_DROP:Int = 150;
-	private static var SELECT_PIXELS:Int = 16;	
+	private static var SELECT_PIXELS:Int = 16;
+	private static var BUTTON_FONT:String = "assets/fonts/CODE2000.TTF";
 	// Instructions to be initialized in create()
 	// After player chooses instructions - copies will be made and added to 
 	// the player instruction list.
@@ -98,7 +99,7 @@ class PlayState extends FlxState
 		_orderDisplay.x = ROLL_X;
 		_orderDisplay.y = ROLL_Y + ROLL_SELECT_DROP;
 		_orderDisplay.size = SELECT_PIXELS;
-		_orderDisplay.systemFont = "Arial";
+		_orderDisplay.setFormat(BUTTON_FONT, SELECT_PIXELS);
 		_orderDisplay.fieldWidth = 400;
 		_orderDisplay.scrollFactor.set(0,0);
 		//_orderDisplay.exists = false;
@@ -112,7 +113,7 @@ class PlayState extends FlxState
 		_rollRight = new FlxButton(0,ROLL_Y,"→",function(){_orderBase++;setOrdersState(); _sndClick.play();});
 		_rollRight.scale.y = ROLL_SCALE;
 		_rollRight.label.size = ROLL_PIXELS;
-		_rollRight.label.systemFont = "Arial";
+		_rollRight.label.setFormat(BUTTON_FONT, ROLL_PIXELS, 0x000000);
 		_rollRight.x = ROLL_X + (ROLL_COUNT + 1)*ROLL_SPACING;
 		_rollRight.label.fieldWidth = _rollRight.width;
 		_rollRight.label.alignment = "center";
@@ -121,7 +122,7 @@ class PlayState extends FlxState
 		_rollLeft = new FlxButton(0,ROLL_Y,"←",function(){_orderBase--;setOrdersState(); _sndClick.play();});
 		_rollLeft.scale.y = ROLL_SCALE;
 		_rollLeft.label.size = ROLL_PIXELS;
-		_rollLeft.label.systemFont = "Arial";
+		_rollLeft.label.setFormat(BUTTON_FONT, ROLL_PIXELS, 0x000000);
 		_rollLeft.x = ROLL_X;
 		_rollLeft.label.fieldWidth =_rollLeft.width;
 		_rollLeft.label.alignment = "center";
@@ -140,7 +141,7 @@ class PlayState extends FlxState
 		});
 		_removeOrder.scale.y = _removeOrder.scale.x = ROLL_SCALE;
 		_removeOrder.label.size = ROLL_PIXELS;
-		_removeOrder.label.systemFont = "Arial";
+		_removeOrder.label.setFormat(BUTTON_FONT, ROLL_PIXELS, 0x000000);
 		_removeOrder.label.fieldWidth = _removeOrder.width;
 		_removeOrder.label.alignment = "center";
 
@@ -150,7 +151,7 @@ class PlayState extends FlxState
 			_orders.insert(0,new FlxButton(ROLL_X +(ROLL_COUNT - i)*ROLL_SPACING,ROLL_Y,"",function(){_sndClick.play();}));
 			_orders[0].scale.x = _orders[0].scale.y = ROLL_SCALE;
 			_orders[0].label.size = ROLL_PIXELS;
-			_orders[0].label.systemFont = "Arial";
+			_orders[0].label.setFormat(BUTTON_FONT, ROLL_PIXELS, 0x000000);
 			_orders[0].label.fieldWidth =_orders[0].width;
 			_orders[0].label.alignment = "center";
 			//_orders[0].exists = false;
