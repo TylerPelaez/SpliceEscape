@@ -19,7 +19,7 @@ class PlayState extends FlxState
 	private static var TILE_WIDTH:Int = 128;
 	private static var TILE_HEIGHT:Int = 128;
 	private static var TILEMAP_PATH:String = "assets/images/tilemap_v1.png";
-	private static var FIRST_LEVEL_NAME:String = "lvl_3";
+	private static var FIRST_LEVEL_NAME:String = "lvl_1";
 	// Constants for orders button roll
 	private static var ROLL_X:Int = 150;
 	private static var ROLL_Y:Int = 150;
@@ -576,7 +576,7 @@ class PlayState extends FlxState
 		// Kill player on collision with red tile(test for barbed wire)
 		_collisionMap.setTileProperties(2,FlxObject.ANY,function(o1:FlxObject,o2:FlxObject){killPlayer();});
 		_collisionMap.setTileProperties(3, FlxObject.ANY, function(o1:FlxObject, o2:FlxObject){
-			if (o1 == _player)
+			if (Std.is(o2, Player) || Std.is(o1, Player))
 			{
 				loadNextLevel();
 				resetPlayerViewMode();
