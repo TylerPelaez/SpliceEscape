@@ -10,7 +10,7 @@ import flixel.FlxObject;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.math.FlxRect;
-import flixel.addons.display.FlxBackdrop;
+//import flixel.addons.display.FlxBackdrop;
 import flixel.system.FlxSound;
 
 class PlayState extends FlxState
@@ -41,7 +41,7 @@ class PlayState extends FlxState
 	private var INTERACT_INSTRUCTION:Instruction;
 
 	private var _player:Player;
-	private var _background:FlxBackdrop;
+	//private var _background:FlxBackdrop;
 	private var _collisionMap:FlxTilemap;
 	private var _inViewMode:Bool;
 
@@ -84,8 +84,8 @@ class PlayState extends FlxState
 		
 		_player = new Player();
 		_collisionMap = new FlxTilemap();
-		_background = new FlxBackdrop("assets/images/walls.png", 1, 1, true, true);
-		add(_background);
+		//_background = new FlxBackdrop("assets/images/walls.png", 1, 1, true, true);
+		//add(_background);
 		_levels = new Array<LevelData>();
 		_selectedInstructionList = new List<Instruction>();
 		initInstructions();
