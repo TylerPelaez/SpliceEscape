@@ -347,6 +347,25 @@ class PlayState extends FlxState
 				_orderDisplay.text += ins._name;
 			}
 		}
+
+		// Needed to ensure buttons show up on top of level
+		var i:Int = 124;
+		remove(_removeOrder);
+		insert(++i, _removeOrder);
+		remove(_rollLeft);
+		insert(++i, _rollLeft);
+		remove(_rollRight);
+		insert(++i, _rollRight);
+		remove(_orderDisplay);
+		insert(++i, _orderDisplay);
+
+		
+		for (order in _orders)
+		{
+			remove(order);
+			insert (i, order);
+			i++;
+		}
 	}
 
 	private function flattenSubInstruction()
@@ -569,7 +588,7 @@ class PlayState extends FlxState
 	{
 		resetPlayerPlayMode();
 		_player.setActive(false);
-		_player.alpha = 0.2;
+		_player.alpha = 0.4;
 		_player.facing = FlxObject.RIGHT;
 		_inViewMode = true;
 		_player.clearInstructions();
