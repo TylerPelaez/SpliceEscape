@@ -212,11 +212,24 @@ class PlayState extends FlxState
 				{
 					resetPlayerViewMode();
 				}
+
 				// Player died or is out of orders! Reset!
-				if (FlxG.collide(_bulletGroup, _player))
+				var bulletItr = _bulletGroup.iterator();
+				for (bullet in bulletItr)
 				{
-					killPlayer();
+					if (FlxG.collide(bullet, _player))
+					{
+						if (!_player._holdingBox)
+						{
+							killPlayer();
+						} else if((_player.facing == FlxObject.LEFT && bullet.getPosition().x > _player.getPosition().x) || (_player.facing == FlxObject.RIGHT && bullet.getPosition().x < _player.getPosition().x) )
+						{
+							killPlayer();
+						}
+						break;
+					}
 				}
+
 				if (_player.getPosition().y > _levels[_currentLevelIndex]._height || _player.isFinished())
 				{
 					resetPlayerViewMode();
