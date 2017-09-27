@@ -11,6 +11,7 @@ import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.math.FlxRect;
 import flixel.addons.display.FlxBackdrop;
+import flixel.system.FlxSound;
 
 class PlayState extends FlxState
 {
@@ -67,6 +68,8 @@ class PlayState extends FlxState
 	private var _removeOrder:FlxButton;
 	private var _orderBase:Int;
 
+	private var _sndClick:FlxSound;
+
 
 
 	override public function create():Void
@@ -100,11 +103,13 @@ class PlayState extends FlxState
 		_orderDisplay.scrollFactor.set(0,0);
 		//_orderDisplay.exists = false;
 
+		_sndClick = FlxG.sound.load(AssetPaths.MenuClick__wav);
+
 		_orders = new Array<FlxButton>();
 
 		_orderBase = 0;
 		
-		_rollRight = new FlxButton(0,ROLL_Y,"→",function(){_orderBase++;setOrdersState(); });
+		_rollRight = new FlxButton(0,ROLL_Y,"→",function(){_orderBase++;setOrdersState(); _sndClick.play();});
 		_rollRight.scale.y = ROLL_SCALE;
 		_rollRight.label.size = ROLL_PIXELS;
 		_rollRight.label.systemFont = "Arial";
@@ -113,7 +118,7 @@ class PlayState extends FlxState
 		_rollRight.label.alignment = "center";
 		//_rollRight.exists = false;
 
-		_rollLeft = new FlxButton(0,ROLL_Y,"←",function(){_orderBase--;setOrdersState(); });
+		_rollLeft = new FlxButton(0,ROLL_Y,"←",function(){_orderBase--;setOrdersState(); _sndClick.play();});
 		_rollLeft.scale.y = ROLL_SCALE;
 		_rollLeft.label.size = ROLL_PIXELS;
 		_rollLeft.label.systemFont = "Arial";
@@ -131,6 +136,7 @@ class PlayState extends FlxState
 				_availableInstructionList.push(ilist);
 				setOrdersState();
 			}
+			_sndClick.play();
 		});
 		_removeOrder.scale.y = _removeOrder.scale.x = ROLL_SCALE;
 		_removeOrder.label.size = ROLL_PIXELS;
@@ -141,7 +147,7 @@ class PlayState extends FlxState
 		//Generate ROLL_COUNT buttons, set them to be scaled and formatted appropriately.
 		for(i in 0...ROLL_COUNT)
 		{
-			_orders.insert(0,new FlxButton(ROLL_X +(ROLL_COUNT - i)*ROLL_SPACING,ROLL_Y,""));
+			_orders.insert(0,new FlxButton(ROLL_X +(ROLL_COUNT - i)*ROLL_SPACING,ROLL_Y,"",function(){_sndClick.play();}));
 			_orders[0].scale.x = _orders[0].scale.y = ROLL_SCALE;
 			_orders[0].label.size = ROLL_PIXELS;
 			_orders[0].label.systemFont = "Arial";
