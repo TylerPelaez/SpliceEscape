@@ -17,7 +17,7 @@ class Lever extends FlxSprite
         _isOn = true;
         setPosition(posX, posY);
         _connectedTurret = new Turret(turretX, turretY, turretFireRate, direction);
-        loadGraphic("assets/images/switch.png");
+        loadGraphic("assets/images/switch-1.png");
         setGraphicSize(64, 64);
         updateHitbox();
 
