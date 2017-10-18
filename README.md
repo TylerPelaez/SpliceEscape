@@ -1,5 +1,5 @@
 # SpliceEscape
-Game Dev 1 Puzzle / Platformer
+A platforming puzzle game!
 
 ## How to Play:
 ### View Mode:
